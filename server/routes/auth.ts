@@ -1,8 +1,9 @@
 import express, { Router } from "express";
-import handleUserLogin from "../contollers/auth";
+import { handleAuthenticateUser, handleCreateUser } from "../contollers/auth";
 
 const authRouter: Router = express.Router();
 
-authRouter.post("/login", handleUserLogin);
+authRouter.post("/login", handleAuthenticateUser);
+authRouter.post("/signup", handleCreateUser);
 
 export default authRouter;
