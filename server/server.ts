@@ -1,6 +1,8 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import authRouter from "./routes/auth";
+
+const authRouter = require("./routes/auth");
+const watchListRouter = require("./routes/watchList");
 
 const server: Express = express();
 
@@ -10,6 +12,8 @@ server.use(express.urlencoded({ extended: true }));
 const port = process.env.SERVER_PORT || 4002;
 
 server.use("/auth", authRouter);
+
+server.use("/most-wanted", watchListRouter);
 
 server.listen(port, () => {
   console.log("Server Running on port", port);
