@@ -17,6 +17,7 @@ services:
       - "5000:5000"
     volumes:
       - .:/server
+      - '/server/node_modules'
     environment:
       NODE_ENV: dev
       SERVER_PORT: 5000
