@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Response } from "express";
-import { IUserAuthRequestObj } from "../types/auth";
+import { IUserAuthRequestObj } from "../lib/types/auth";
 
 export default function authenticateToken(
   req: IUserAuthRequestObj,
