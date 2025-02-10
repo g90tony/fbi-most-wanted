@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+const bcrypt = require("bcryptjs");
 
 export default async function validatePassword(
   plainPassword: string,

@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+const bcrypt = require("bcryptjs");
 
 export default async function hashPassword(plainPassword: string) {
   // Hashing user's salt and password with 10 iterations,
