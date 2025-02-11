@@ -19,12 +19,20 @@ export default async function handleNewUserSignUp(form: TSignUpFormSchema) {
     );
   }
 
+  if (form.password !== form.password2) {
+    console.error("The entered passwords do not match.");
+
+    throw new Error("The entered passwords do not match.");
+  }
+
   let response: boolean | null = null;
 
   try {
     response = await new Promise((resolve, reject) => {
       axiosClient
-        .get("/")
+        .post("/auth/signup", {
+          data: { ...form },
+        })
         .then(() => {
           resolve(true);
         })
