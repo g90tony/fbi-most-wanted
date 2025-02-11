@@ -41,9 +41,11 @@ export default async function handleNewUserSignUp(form: TSignUpFormSchema) {
         });
     });
   } catch (error: unknown) {
-    if (isDevEnv) console.error("There was an error creating the user", error);
+    if (isDevEnv) console.error("CREATE_USER_REQUEST_FAILURE", error);
 
-    throw new Error("There was an error creating the user");
+    throw new Error(
+      "There was an error creating your account. Please try again later"
+    );
   }
 
   return response;
