@@ -11,9 +11,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { AuthState } from "@/state/slices/authStateSlice";
+import { TAuthState } from "@/types/state";
 import { Separator } from "@radix-ui/react-separator";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 
 const user = {
   avatar: "",
@@ -22,6 +26,15 @@ const user = {
 };
 
 export default function AuthLayout() {
+  const authState: TAuthState = useSelector(AuthState);
+  const router = useNavigate();
+
+  useEffect(() => {
+    if (authState.isAuthenticated === false) {
+      router("/signup");
+    }
+  }, [authState, router]);
+
   return (
     <div className="flex flex-col !bg-black p-0 m-0 w-screen h-screen overflow-hidden absolute">
       <SidebarProvider className="!bg-black">
