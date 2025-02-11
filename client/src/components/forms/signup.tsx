@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
 import { useCallback } from "react";
-import { Form, FormField, FormItem, FormLabel } from "../ui/form";
+import { Form, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Loader } from "lucide-react";
 import handleNewUserSignUp from "@/api/handleNewUserSignUp";
 
@@ -101,6 +101,7 @@ export function SignUpForm({
                           placeholder="John Doe"
                           required
                         />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -124,6 +125,7 @@ export function SignUpForm({
                           placeholder="john_d"
                           required
                         />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -148,6 +150,7 @@ export function SignUpForm({
                           placeholder="m@example.com"
                           required
                         />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -171,6 +174,7 @@ export function SignUpForm({
                           type="password"
                           required
                         />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -194,13 +198,14 @@ export function SignUpForm({
                           type="password"
                           required
                         />
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
                 <div className="flex flex-row flex-nowrap justify-between h-auto w-full mt-4">
                   <Button
-                    onClick={() => signUpForm.handleSubmit(onSubmit)}
+                    onClick={signUpForm.handleSubmit(onSubmit)}
                     type="submit"
                     className="w-[200px] font-bold bg-white text-blue-700 hover:text-blue-300 hover:bg-blue-950"
                     disabled={isPending}
