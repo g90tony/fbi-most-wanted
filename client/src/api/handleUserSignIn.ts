@@ -1,8 +1,10 @@
 import { signInFormSchema, TSignInFormSchema } from "@/types/formSchema";
 import { TUserSignInResponse } from "../types/apiResponse";
+import axiosClient from "@/lib/axios/axiosClient";
+import isDevEnv from "@/lib/isDevEnv";
 
 export default async function handleUserSignIn(form: TSignInFormSchema) {
-  console.log("form", form);
+  let response: TUserSignInResponse | null = null;
 
   const { success, data } = signInFormSchema.safeParse(form);
 
@@ -18,12 +20,47 @@ export default async function handleUserSignIn(form: TSignInFormSchema) {
     );
   }
 
-  const authResponse: TUserSignInResponse = {
-    id: Math.floor(Math.random() * (100 - 1)),
-    email: "calebmbugua@gmail.com",
-    name: "Caleb Tony",
-    sessionToken: "SKFOEJFOFVOEKWPD",
-  };
+  try {
+    response = await new Promise((resolve, reject) => {
+      axiosClient
+        .post("/auth/login", {
+          data: {
+            ...form,
+          },
+        })
+        .then((res: unknown) => {
+          const data = res as TUserSignInResponse;
+          resolve({
+            id: data.id,
+            email: data.email,
+            name: data.name,
+            sessionToken: data.sessionToken,
+          });
+        })
+        .catch((error: Error) => {
+          reject(error);
+        });
+    });
+  } catch (error: unknown) {
+    if (isDevEnv) console.error("There was an error signing you in", error);
 
-  return authResponse;
+    throw new Error(
+      "There was an error signing you in. Please try again later."
+    );
+  }
+
+  if (response !== null) {
+    const authResponse: TUserSignInResponse = {
+      id: response.id,
+      email: response.email,
+      name: response.name,
+      sessionToken: response.sessionToken,
+    };
+
+    return authResponse;
+  } else {
+    throw new Error(
+      "There was an error signing you in. Please try again later."
+    );
+  }
 }
