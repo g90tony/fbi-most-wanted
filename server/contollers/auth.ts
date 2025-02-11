@@ -85,6 +85,8 @@ export async function handleAuthenticateUser(req: Request, res: Response) {
 export async function handleCreateUser(req: Request, res: Response) {
   const reqData: TAuthCreateUser = req.body;
 
+  console.log("reqData", reqData, req.body);
+
   const newUser = await new Promise(async function (resolve) {
     const userExists: boolean = await prismaClient.user
       .findMany({
@@ -96,7 +98,7 @@ export async function handleCreateUser(req: Request, res: Response) {
         if (data.length !== 0) {
           return true;
         } else {
-          return true;
+          return false;
         }
       })
       .catch((error: Error) => {
@@ -109,7 +111,7 @@ export async function handleCreateUser(req: Request, res: Response) {
     if (userExists === false) {
       const hashedPassword: string = await hashPassword(reqData.password);
 
-      prismaClient.user
+      await prismaClient.user
         .create({
           data: {
             email: reqData.email,
