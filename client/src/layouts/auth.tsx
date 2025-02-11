@@ -23,12 +23,12 @@ const user = {
 
 export default function AuthLayout() {
   return (
-    <div className="bg-black p-0 m-0 w-screen h-screen overflow-hidden">
-      <SidebarProvider>
+    <div className="flex flex-col !bg-black p-0 m-0 w-screen h-screen overflow-hidden absolute">
+      <SidebarProvider className="!bg-black">
         <AuthenticatedNavigationSidebar />
         <SidebarInset>
-          <header className="flex flex-row justify-end w-full h-16 shrink-0 items-center gap-0 bg-black">
-            <div className="flex items-center gap-0 px-4 bg-zinc-700 w-full">
+          <header className="flex flex-row justify-end w-full h-16 shrink-0 items-center gap-0 !bg-black">
+            <div className="flex items-center gap-0 px-4 w-full">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               <Breadcrumb>
@@ -47,7 +47,7 @@ export default function AuthLayout() {
             </div>
             <AuthenticatedNavigationSidebarUserPopup user={user} />
           </header>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-black overflow-y-auto">
+          <div className="flex flex-col gap-4 p-4 pt-0 m-0 !bg-black overflow-hidden h-full">
             <Outlet />
           </div>
         </SidebarInset>
