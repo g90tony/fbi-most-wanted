@@ -33,12 +33,12 @@ const data = {
     },
     {
       title: "My Watch List",
-      url: "/most-viewed",
+      url: "/my-list",
       icon: Eye,
     },
     {
       title: "Recent Activity",
-      url: "#",
+      url: "/recent-activity",
       icon: Activity,
     },
   ],
