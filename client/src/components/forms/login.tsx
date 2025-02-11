@@ -8,13 +8,55 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import logo from "../../assets/fbi-logo.png";
+import { useNavigate } from "react-router";
+import { signInFormSchema, TSignInFormSchema } from "../../types/formSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { Form, FormField, FormItem, FormLabel } from "../ui/form";
+import { Loader } from "lucide-react";
+import { useCallback } from "react";
+import { TUserSignInResponse } from "../../types/apiResponse";
+import handleUserSignIn from "@/api/handleUserSignIn";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const router = useNavigate();
+
+  const signInForm = useForm<TSignInFormSchema>({
+    resolver: zodResolver(signInFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: handleUserSignIn,
+    onSuccess: (userAuthObj: TUserSignInResponse) => {
+      toast.success(
+        `Welcome back, ${userAuthObj.name}. You have been successfully authenticated. Your will now be redirected to the login page`,
+        { id: "exisiting-user-signin" }
+      );
+
+      router("/dashboard");
+    },
+    onError: (error: Error) => {
+      toast.success(error.message, { id: "exisiting-user-signin" });
+    },
+  });
+
+  const onSubmit = useCallback(
+    async function (values: TSignInFormSchema) {
+      mutate(values);
+    },
+    [mutate]
+  );
+
   return (
     <div className={cn("flex flex-col gap-6 w-[40vw]", className)} {...props}>
       <Card className="border-black bg-blue-950/20">
@@ -35,61 +77,84 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2 mb-2">
-                <Label className="text-blue-100 font-bold mb-2" htmlFor="email">
-                  Email
-                </Label>
-                <Input
-                  className="bg-blue-950/20 border-blue-700/15"
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2 mb-2">
-                <div className="flex items-center">
-                  <Label
-                    className="text-blue-100 font-bold mb-2"
-                    htmlFor="password"
+          <Form {...signInForm}>
+            <form>
+              <FormField
+                control={signInForm.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem
+                    {...field}
+                    className="flex flex-col items-center gap-2 mb-6"
                   >
-                    Password
-                  </Label>
+                    <FormLabel className="text-blue-100 font-bold mb-2">
+                      Email
+                    </FormLabel>
+                    <Input
+                      className="bg-blue-950/20 border-blue-700/15"
+                      id="email"
+                      type="email"
+                      placeholder="m@example.com"
+                      {...field}
+                    />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={signInForm.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem
+                    {...field}
+                    className="flex flex-col items-center gap-2 mb-6"
+                  >
+                    <div className="flex flex-row justify-between w-full">
+                      <FormLabel className="text-blue-100 font-bold mb-2">
+                        Password
+                      </FormLabel>
+                      <a
+                        href="/forgot-password"
+                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </a>
+                    </div>
+                    <Input
+                      className="bg-blue-950/20 border-blue-700/15"
+                      id="password"
+                      type="password"
+                      {...field}
+                    />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex flex-row flex-nowrap justify-between h-auto w-full mt-4">
+                <Button
+                  type="submit"
+                  onClick={signInForm.handleSubmit(onSubmit)}
+                  className="w-[200px] font-bold bg-white text-blue-700 hover:text-blue-300 hover:bg-blue-950"
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <Loader className="animate-spin text-blue-600" />
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+                <div className="mt-4 text-center text-sm">
+                  Don't have an account?{" "}
                   <a
-                    href="/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    href="/sign-up"
+                    className="underline underline-offset-4 font-bold"
                   >
-                    Forgot your password?
+                    Create an Account
                   </a>
                 </div>
-                <Input
-                  className="bg-blue-950/20 border-blue-700/15"
-                  id="password"
-                  type="password"
-                  required
-                />
               </div>
-            </div>
-            <div className="flex flex-row flex-nowrap justify-between h-auto w-full mt-4">
-              <Button
-                type="submit"
-                className="w-[200px] font-bold bg-white text-blue-700 hover:text-blue-300 hover:bg-blue-950"
-              >
-                Log In
-              </Button>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <a
-                  href="/sign-up"
-                  className="underline underline-offset-4 font-bold"
-                >
-                  Sign in
-                </a>
-              </div>
-            </div>
-          </form>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>
