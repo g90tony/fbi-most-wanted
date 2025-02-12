@@ -10,74 +10,103 @@ import { addDays } from "date-fns";
 
 export async function handleAuthenticateUser(req: Request, res: Response) {
   const reqData: TAuthAuthenticateUser = req.body;
+  let authenticatedUser: {
+    id: number;
+    name: string;
+    email: string;
+    sessionToken: string;
+  } | null = null;
 
-  const authenticatedUser = await new Promise(async (resolve) => {
-    await prismaClient.user
-      .findFirst({
-        where: {
-          email: reqData.email,
-        },
-      })
-      .then(async (userData) => {
-        if (userData === null) {
-          res.status(404).json({ message: "The user email does not exist." });
-        } else {
-          const passwordMatch: boolean = await validatePassword(
-            reqData.password,
-            userData.password
-          );
+  if (process.env.ENV === "development") console.log("reqData", reqData);
 
-          if (passwordMatch) {
-            const newSessionToken = generateAccessToken({
-              email: userData.email,
-              id: userData.id,
-              username: userData.user_name,
-            });
+  try {
+    authenticatedUser = await new Promise(async (resolve, reject) => {
+      await prismaClient.user
+        .findFirst({
+          where: {
+            email: reqData.email,
+          },
+        })
+        .then(async (userData) => {
+          if (process.env.ENV === "development")
+            console.log("userData", userData);
 
-            prismaClient.userSession
-              .create({
-                data: {
-                  session_token: newSessionToken,
-                  userId: userData.id,
-                  expiryTime: addDays(new Date(), 1).getTime(),
-                },
-              })
-              .then((userSessionData) => {
-                res.status(200).json({
-                  user: {
+          if (userData === null) {
+            if (process.env.ENV === "development")
+              console.error("user not found", userData);
+            reject("The user email does not exist.");
+          } else {
+            if (process.env.ENV === "development")
+              console.info("user found", userData);
+
+            const passwordMatch: boolean = await validatePassword(
+              reqData.password,
+              userData.password
+            );
+
+            if (passwordMatch) {
+              if (process.env.ENV === "development")
+                console.info("password match");
+
+              const newSessionToken = generateAccessToken({
+                email: userData.email,
+                id: userData.id,
+                username: userData.user_name,
+              });
+
+              await prismaClient.userSession
+                .create({
+                  data: {
+                    session_token: newSessionToken,
+                    userId: userData.id,
+                    expiryTime: addDays(new Date(), 1).getTime(),
+                  },
+                })
+                .then((userSessionData) => {
+                  if (process.env.ENV === "development")
+                    console.info("session", userSessionData);
+
+                  resolve({
                     id: userData.id,
                     name: userData.name,
                     email: userData.email,
-                    userName: userData.user_name,
-                  },
-                  auth: {
-                    token: userSessionData.session_token,
-                    expiryTime: userSessionData.expiryTime,
-                  },
+                    sessionToken: userSessionData.session_token,
+                  });
+                })
+                .catch((error: Error) => {
+                  if (process.env.ENV === "development")
+                    console.error("password incorrect", error.message);
+
+                  reject(error.message);
                 });
+            } else {
+              if (process.env.ENV === "development")
+                console.error("password incorrect", userData);
 
-                resolve(true);
-              })
-              .catch((error: Error) => {
-                res.status(500).json({ message: error.message });
-              });
-          } else {
-            res
-              .status(400)
-              .json({ message: "The user password in incorrect." });
+              reject("The user password in incorrect.");
+            }
           }
-        }
-      })
-      .catch((error: Error) => {
-        res.status(500).json({
-          message: error.message,
-        });
-      });
-  });
+        })
+        .catch((error: Error) => {
+          if (process.env.ENV === "development")
+            console.error("userSessionData error", error);
 
-  if (authenticatedUser) {
-    res.status(200).json({
-      message: "You have successfully hit this endpoint",
+          res.status(500).json({
+            message: error.message,
+          });
+        });
+    });
+
+    if (process.env.ENV === "development")
+      console.info("authenticatedUser", authenticatedUser);
+
+    if (authenticatedUser) {
+      res.status(200).json(authenticatedUser);
+    }
+  } catch (error: unknown) {
+    const err = error as Error;
+    res.status(500).json({
+      message: err.message,
     });
   }
 }
@@ -85,7 +114,8 @@ export async function handleAuthenticateUser(req: Request, res: Response) {
 export async function handleCreateUser(req: Request, res: Response) {
   const reqData: TAuthCreateUser = req.body;
 
-  console.log("reqData", reqData, req.body);
+  if (process.env.ENV === "development")
+    console.log("reqData", reqData, req.body);
 
   const newUser = await new Promise(async function (resolve) {
     const userExists: boolean = await prismaClient.user
