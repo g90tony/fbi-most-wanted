@@ -21,6 +21,7 @@ export const authStateSlice = createSlice({
         email: action.payload.email,
         name: action.payload.name,
         token: action.payload.token,
+        tokenExpiryTime: action.payload.tokenExpiryTime,
       };
     },
     DEAUTHENTICATE_USER: (state: TAuthState) => {
