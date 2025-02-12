@@ -50,6 +50,87 @@ export async function handleFetchPaginatedWantedList(
   }
 }
 
+export async function handleFetchWantedPerson(req: Request, res: Response) {
+  const personUID = req.params.personUID;
+
+  const allTargets = await axios({
+    method: "GET",
+    url: "https://api.fbi.gov/wanted/v1/list",
+    params: {
+      page: 1,
+    },
+  })
+    .then((data) => data)
+    .catch((error) => {
+      console.error(
+        "LIST_WANTED_LIST_FAILURE",
+        { ...(error as AxiosError) }.message
+      );
+    });
+
+  let resData: any | null = null;
+
+  if (allTargets === null || allTargets === undefined) {
+    [...fallbackData].forEach((person: any) => {
+      if (person.uid === personUID) {
+        resData = {
+          uid: person.uid,
+          occupations: person.occupations !== null ? person.occupations : [],
+          sex: person.sex !== null ? person.sex : "--",
+          dates_of_birth_used:
+            person.dates_of_birth_used !== null
+              ? person.dates_of_birth_used
+              : [],
+          caution: person.caution !== null ? person.caution : "--",
+          nationality: person.nationality !== null ? person.nationality : "--",
+          subjects: person.subjects !== null ? person.subjects : [],
+          aliases: person.aliases !== null ? person.aliases : [],
+          title: person.title !== null ? person.title : "--",
+          languages: person.languages !== null ? person.languages : [],
+          details: person.details !== null ? person.details : "--",
+          image: person.images[0].large,
+        };
+      }
+    });
+
+    console.log(personUID, resData);
+
+    if (resData !== null) {
+      res.status(200).json(resData);
+    } else {
+      res.status(404);
+    }
+  } else {
+    [...allTargets!.data].forEach((person: any) => {
+      if (person.uid === personUID) {
+        resData = {
+          uid: person.uid,
+          occupations: person.occupations !== null ? person.occupations : [],
+          sex: person.sex !== null ? person.sex : "--",
+          dates_of_birth_used:
+            person.dates_of_birth_used !== null
+              ? person.dates_of_birth_used
+              : [],
+          caution: person.caution !== null ? person.caution : "--",
+          nationality: person.nationality !== null ? person.nationality : "--",
+          subjects: person.subjects !== null ? person.subjects : [],
+          aliases: person.aliases !== null ? person.aliases : [],
+          title: person.title !== null ? person.title : "--",
+          languages: person.languages !== null ? person.languages : [],
+          details: person.details !== null ? person.details : "--",
+          image: person.images[0].large,
+        };
+      }
+    });
+
+    if (resData !== null) {
+      res.status(200).json(resData);
+    } else {
+      res.status(404);
+    }
+  }
+}
+
 export async function handleFetchCategoryWantedList(
   req: Request,
   res: Response

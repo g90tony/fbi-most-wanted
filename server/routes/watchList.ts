@@ -4,6 +4,7 @@ import {
   handleFetchPaginatedWantedList,
   handleFetchPaginatedWantedListNextPage,
   handleFetchWantedCategories,
+  handleFetchWantedPerson,
 } from "../contollers/watchList";
 
 const authenticateToken = require("../middleware/authenticateToken");
@@ -15,5 +16,6 @@ watchListRouter.get("/list", handleFetchPaginatedWantedList);
 watchListRouter.get("/list/next", handleFetchPaginatedWantedListNextPage);
 watchListRouter.get("/categories", handleFetchWantedCategories);
 watchListRouter.get("/categories/:category", handleFetchCategoryWantedList);
+watchListRouter.get("/get/:personUID", handleFetchWantedPerson);
 
 module.exports = watchListRouter;
