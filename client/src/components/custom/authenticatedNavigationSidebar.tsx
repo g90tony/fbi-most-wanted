@@ -48,7 +48,7 @@ export function AuthenticatedNavigationSidebar({
         <SidebarMenu className="!bg-zinc-950">
           <SidebarMenuItem className="!bg-zinc-950">
             <SidebarMenuButton className="!bg-zinc-950" size="lg" asChild>
-              <a href="#" className="!bg-zinc-950">
+              <a href="/" className="!bg-zinc-950">
                 <div className="flex flex-row w-auto h-auto aspect-square size-8 items-center justify-center rounded-lg !bg-zinc-950 text-sidebar-primary-foreground">
                   <img
                     src={logo}
