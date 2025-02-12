@@ -1,7 +1,8 @@
 import { signInFormSchema, TSignInFormSchema } from "@/types/formSchema";
 import { TUserSignInResponse } from "../types/apiResponse";
-import axiosClient from "@/lib/axios/axiosClient";
+
 import isDevEnv from "@/lib/isDevEnv";
+import axios, { AxiosResponse } from "axios";
 
 export default async function handleUserSignIn(form: TSignInFormSchema) {
   let response: TUserSignInResponse | null = null;
@@ -22,14 +23,18 @@ export default async function handleUserSignIn(form: TSignInFormSchema) {
 
   try {
     response = await new Promise((resolve, reject) => {
-      axiosClient
-        .post("/auth/login", {
-          data: {
-            ...form,
-          },
-        })
-        .then((res: unknown) => {
-          const data = res as TUserSignInResponse;
+      axios({
+        method: "post",
+        url: `${import.meta.env.VITE_API_URL}auth/login`,
+        data: {
+          ...form,
+        },
+      })
+        .then((res: AxiosResponse) => {
+          const data = res.data as TUserSignInResponse;
+
+          if (isDevEnv) console.log("res", res.data);
+
           resolve({
             id: data.id,
             email: data.email,

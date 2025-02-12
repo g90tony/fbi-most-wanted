@@ -1,6 +1,6 @@
-import axiosClient from "@/lib/axios/axiosClient";
 import isDevEnv from "@/lib/isDevEnv";
 import { signUpFormSchema, TSignUpFormSchema } from "@/types/formSchema";
+import axios from "axios";
 
 export default async function handleNewUserSignUp(form: TSignUpFormSchema) {
   console.log("form", form);
@@ -29,17 +29,23 @@ export default async function handleNewUserSignUp(form: TSignUpFormSchema) {
 
   try {
     response = await new Promise((resolve, reject) => {
-      axiosClient
-        .post("/auth/signup", {
-          data: { ...form },
-        })
-        .then(() => {
+      axios({
+        method: "post",
+
+        url: `${import.meta.env.VITE_API_URL}auth/signup`,
+
+        data: { ...form },
+      })
+        .then((data) => {
+          if (isDevEnv) console.error("CREATE_USER_REQUEST_SUCCESS", data);
           resolve(true);
         })
         .catch((error: Error) => {
           reject(error);
         });
     });
+
+    return response;
   } catch (error: unknown) {
     if (isDevEnv) console.error("CREATE_USER_REQUEST_FAILURE", error);
 
@@ -47,6 +53,4 @@ export default async function handleNewUserSignUp(form: TSignUpFormSchema) {
       "There was an error creating your account. Please try again later"
     );
   }
-
-  return response;
 }
