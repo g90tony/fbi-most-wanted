@@ -16,10 +16,12 @@ export const authStateSlice = createSlice({
       action: PayloadAction<TAuthAuthenticatedUser>
     ) => {
       state.isAuthenticated = true;
-      state.authenticatedUser!.id = action.payload.id;
-      state.authenticatedUser!.email = action.payload.email;
-      state.authenticatedUser!.name = action.payload.name;
-      state.authenticatedUser!.token = action.payload.token;
+      state.authenticatedUser = {
+        id: action.payload.id,
+        email: action.payload.email,
+        name: action.payload.name,
+        token: action.payload.token,
+      };
     },
     DEAUTHENTICATE_USER: (state: TAuthState) => {
       state.isAuthenticated = false;
