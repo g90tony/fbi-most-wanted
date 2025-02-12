@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import logo from "../../assets/fbi-logo.png";
-import { useNavigate } from "react-router";
 import { signInFormSchema, TSignInFormSchema } from "../../types/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,12 +19,14 @@ import { Loader } from "lucide-react";
 import { useCallback } from "react";
 import { TUserSignInResponse } from "../../types/apiResponse";
 import handleUserSignIn from "@/api/handleUserSignIn";
+import { AUTHENTICATE_USER } from "@/state/slices/authStateSlice";
+import { useDispatch } from "react-redux";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const router = useNavigate();
+  const dispatch = useDispatch();
 
   const signInForm = useForm<TSignInFormSchema>({
     resolver: zodResolver(signInFormSchema),
@@ -42,11 +43,19 @@ export function LoginForm({
         `Welcome back, ${userAuthObj.name}. You have been successfully authenticated. Your will now be redirected to the login page`,
         { id: "exisiting-user-signin" }
       );
+      dispatch(
+        AUTHENTICATE_USER({
+          id: userAuthObj.id,
+          email: userAuthObj.email,
+          name: userAuthObj.name,
+          token: userAuthObj.sessionToken,
+        })
+      );
 
-      router("/dashboard");
+      // router("/dashboard");
     },
     onError: (error: Error) => {
-      toast.success(error.message, { id: "exisiting-user-signin" });
+      toast.error(error.message, { id: "exisiting-user-signin" });
     },
   });
 
