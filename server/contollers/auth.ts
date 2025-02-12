@@ -15,6 +15,7 @@ export async function handleAuthenticateUser(req: Request, res: Response) {
     name: string;
     email: string;
     sessionToken: string;
+    tokenExpiryTime: number;
   } | null = null;
 
   if (process.env.ENV === "development") console.log("reqData", reqData);
@@ -71,6 +72,9 @@ export async function handleAuthenticateUser(req: Request, res: Response) {
                     name: userData.name,
                     email: userData.email,
                     sessionToken: userSessionData.session_token,
+                    tokenExpiryTime: parseInt(
+                      String(userSessionData.expiryTime)
+                    ),
                   });
                 })
                 .catch((error: Error) => {
