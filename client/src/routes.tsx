@@ -11,6 +11,7 @@ import SignInPage from "./pages/public/signInPage";
 import PublicLayout from "./layouts/public";
 import UserActivity from "./pages/authenticated/userActivity";
 import UserWantedList from "./pages/authenticated/userWantedList";
+import WantedPersonsCategoryListPage from "./pages/authenticated/wantedPersonsCategoryListPage";
 
 export default function MainRouter() {
   return (
@@ -26,13 +27,15 @@ export default function MainRouter() {
           path="/wanted-categories"
           element={<WantedPersonsCategoriesPage />}
         />
+        <Route
+          path="/wanted-categories/:category"
+          element={<WantedPersonsCategoryListPage />}
+        />
         <Route path="/my-list" element={<UserWantedList />} />
-        <Route path="/recent-activity" element={<UserActivity />} />
         <Route
           path="wanted-persons/:id"
           element={<WantedPersonDetailsPage />}
         />
-        <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
   );
