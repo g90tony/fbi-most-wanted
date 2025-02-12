@@ -22,7 +22,7 @@ const data = {
   navMain: [
     {
       title: "Home",
-      url: "/dashboard",
+      url: "/",
       icon: HomeIcon,
       isActive: true,
     },
