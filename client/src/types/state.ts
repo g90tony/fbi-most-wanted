@@ -3,6 +3,7 @@ export type TAuthAuthenticatedUser = {
   name: string;
   email: string;
   token: string;
+  tokenExpiryTime: number;
 };
 export type TAuthState = {
   isAuthenticated: boolean;
