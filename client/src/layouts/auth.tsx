@@ -1,5 +1,6 @@
 import { AuthenticatedNavigationSidebar } from "@/components/custom/authenticatedNavigationSidebar";
 import { AuthenticatedNavigationSidebarUserPopup } from "@/components/custom/authenticatedNavigationSidebarUserPopup";
+import GlobalLoader from "@/components/custom/globalLoader";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,10 +12,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import useSessionTimeout from "@/hooks/useSessionTimeout";
 import { AuthState } from "@/state/slices/authStateSlice";
 import { TAuthState } from "@/types/state";
 import { Separator } from "@radix-ui/react-separator";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import { Outlet, useNavigate } from "react-router";
@@ -28,6 +30,7 @@ const user = {
 export default function AuthLayout() {
   const authState: TAuthState = useSelector(AuthState);
   const router = useNavigate();
+  useSessionTimeout();
 
   useEffect(() => {
     if (authState.isAuthenticated === false) {
@@ -61,7 +64,11 @@ export default function AuthLayout() {
             <AuthenticatedNavigationSidebarUserPopup user={user} />
           </header>
           <div className="flex flex-col gap-4 p-4 pt-0 m-0 !bg-black overflow-hidden h-full">
-            <Outlet />
+            <Suspense
+              fallback={<GlobalLoader message="Loading page" type="page" />}
+            >
+              <Outlet />
+            </Suspense>
           </div>
         </SidebarInset>
       </SidebarProvider>
