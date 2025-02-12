@@ -7,7 +7,7 @@ export type TAuthJWT = {
 };
 
 export interface IUserAuthRequestObj extends Request {
-  user: string; // or any other type
+  user: TAuthJWT; // or any other type
 }
 
 export type TAuthAuthenticateUser = {
