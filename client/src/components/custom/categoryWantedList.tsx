@@ -25,7 +25,9 @@ export default function CategoriesCategoryWantedList() {
 
   const [wantedList, setWantedList] = useState<TDashboardListResponse>([]);
 
-  // function handleViewCategorizedWantedList() {}
+  function handleViewWantedPerson(personUID: string) {
+    router(`/wanted-persons/${personUID}`);
+  }
 
   const handleAddToPersonalList = useCallback(
     async function (selectedPerson: TWantedPersonMeta) {
@@ -136,6 +138,7 @@ export default function CategoriesCategoryWantedList() {
         wantedList.map((person, index: number) => (
           <Card
             key={index}
+            onClick={() => handleViewWantedPerson(person.uid)}
             className="grid col-span-1 lg:col-span-1 rounded-xl justify-items-stretch text-center content-start w-full h-full max-h-[550px] border-0 mb-4 bg-zinc-950"
           >
             <CardHeader className="flex flex-row justify-end items-center w-full h-auto">

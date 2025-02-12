@@ -23,7 +23,7 @@ export default function DashboardWantedList() {
   const [wantedList, setWantedList] = useState<TDashboardListResponse>([]);
 
   function handleViewWantedPerson(personUID: string) {
-    router(`wanted-persons/${personUID}`);
+    router(`/wanted-persons/${personUID}`);
   }
 
   const handleFetchData = useCallback(
