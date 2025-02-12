@@ -21,6 +21,7 @@ model User {
   user_name   String
   password    String
   UserSession UserSession[]
+  UserList    UserList[]
 }
 
 model UserSession {
@@ -29,4 +30,18 @@ model UserSession {
   userId        Int
   session_token String @unique
   expiryTime    BigInt
+}
+
+model UserList {
+  id             Int              @id @default(autoincrement())
+  user_id        Int
+  personUID      String           @unique
+  user           User             @relation(fields: [user_id], references: [id])
+  UserListPerson UserListPerson[]
+}
+
+model UserListPerson {
+  uid      String   @id @unique
+  list_id  Int
+  UserList UserList @relation(fields: [list_id], references: [id])
 }
