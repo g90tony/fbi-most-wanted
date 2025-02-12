@@ -21,7 +21,8 @@ model User {
   user_name   String
   password    String
   UserSession UserSession[]
-  UserList    UserList[]
+  userListId  Int           @unique @default(0)
+  UserList    UserList?
 }
 
 model UserSession {
@@ -34,14 +35,15 @@ model UserSession {
 
 model UserList {
   id             Int              @id @default(autoincrement())
-  user_id        Int
-  personUID      String           @unique
-  user           User             @relation(fields: [user_id], references: [id])
+  user_id        Int              @unique
   UserListPerson UserListPerson[]
+
+  User User @relation(fields: [user_id], references: [id])
 }
 
 model UserListPerson {
-  uid      String   @id @unique
-  list_id  Int
-  UserList UserList @relation(fields: [list_id], references: [id])
+  uid        String   @id @unique
+  list_id    Int
+  person_uid String
+  UserList   UserList @relation(fields: [list_id], references: [id])
 }
