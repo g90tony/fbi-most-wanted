@@ -150,7 +150,7 @@ export async function handleCreateUser(req: Request, res: Response) {
           data: {
             email: reqData.email,
             user_name: reqData.username,
-            name: `${reqData.firstName} ${reqData.lastName}`,
+            name: reqData.name,
             password: hashedPassword,
           },
         })
