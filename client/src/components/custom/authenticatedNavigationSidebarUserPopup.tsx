@@ -1,13 +1,11 @@
-import { BadgeCheck, ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -16,6 +14,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { DEAUTHENTICATE_USER } from "@/state/slices/authStateSlice";
+import { useDispatch } from "react-redux";
 
 export function AuthenticatedNavigationSidebarUserPopup({
   user,
@@ -26,7 +26,12 @@ export function AuthenticatedNavigationSidebarUserPopup({
     avatar: string;
   };
 }) {
+  const dispatch = useDispatch();
   const { isMobile } = useSidebar();
+
+  function handleLogOut() {
+    dispatch(DEAUTHENTICATE_USER());
+  }
 
   return (
     <SidebarMenu>
@@ -53,15 +58,15 @@ export function AuthenticatedNavigationSidebarUserPopup({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg border-0 bg-zinc-900 gap-4 py-2"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-0 border-0 bg-zinc-900 p-0 gap-0"
             side={isMobile ? "bottom" : "bottom"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="font-normal p-0">
-              <div className="flex flex-col items-center !bg-zinc-800 rounded-lg gap-2 px-2 py-2 text-left text-sm">
+              <div className="flex flex-col items-center !bg-zinc-950/50  gap-2 px-2 py-2 text-left text-sm">
                 <div className="flex flex-col w-full text-left text-sm leading-tight ">
-                  <span className="truncate text-sm font-bold mb-1">
+                  <span className="truncate text-sm text-blue-400 font-bold mb-1">
                     {user.name}
                   </span>
                   <span className="truncate text-xs text-zinc-500">
@@ -70,15 +75,10 @@ export function AuthenticatedNavigationSidebarUserPopup({
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem className="hover:!bg-black text-white font-bold ">
-                <BadgeCheck />
-                Profile
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="hover:!bg-rose-600 hover:text-white text-rose-600 font-bold">
+            <DropdownMenuItem
+              onClick={handleLogOut}
+              className="bg-rose-600 hover:!bg-rose-950 text-white border-[0px] font-bold h-12 my-0"
+            >
               <LogOut />
               Log out
             </DropdownMenuItem>

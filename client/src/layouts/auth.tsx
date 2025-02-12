@@ -31,7 +31,7 @@ export default function AuthLayout() {
 
   useEffect(() => {
     if (authState.isAuthenticated === false) {
-      router("/signup");
+      router("/sign-in");
     }
   }, [authState, router]);
 
