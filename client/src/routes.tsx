@@ -5,11 +5,11 @@ import DashboardPage from "./pages/authenticated/dashboardPage";
 
 import WantedPersonsCategoriesPage from "./pages/authenticated/wantedPersonsCategoriesPage";
 import WantedPersonDetailsPage from "./pages/authenticated/wantedPersonDetailsPage";
-import ProfilePage from "./pages/authenticated/profilePage";
+
 import SignUpPage from "./pages/public/signUpPage";
 import SignInPage from "./pages/public/signInPage";
 import PublicLayout from "./layouts/public";
-import UserActivity from "./pages/authenticated/userActivity";
+
 import UserWantedList from "./pages/authenticated/userWantedList";
 import WantedPersonsCategoryListPage from "./pages/authenticated/wantedPersonsCategoryListPage";
 
