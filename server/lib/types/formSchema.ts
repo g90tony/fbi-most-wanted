@@ -4,5 +4,5 @@ export type TAuthCreateUser = {
   email: string;
   username: string;
   password: string;
-  passwordConfirmation: string;
+  password2: string;
 };
