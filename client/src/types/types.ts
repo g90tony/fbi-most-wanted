@@ -3,3 +3,11 @@ export type TDashboardStatsData = {
   totalWantedCategory: string;
   mostWantedNationality: string;
 };
+
+export type TWantedPersonMeta = {
+  uid: string;
+  title: string;
+  publication: string;
+  nationality: string;
+  image: string;
+};
