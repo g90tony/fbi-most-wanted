@@ -7,7 +7,7 @@ const watchListRouter = require("./routes/watchList");
 
 const server: Express = express();
 
-var allowlist = ["*"];
+var allowlist = ["https://localhost:3000", "http://127.0.0.1", "*"];
 
 var corsOptionsDelegate = function (req: any, callback: any) {
   var corsOptions;
