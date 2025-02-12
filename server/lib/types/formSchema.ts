@@ -1,6 +1,5 @@
 export type TAuthCreateUser = {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   username: string;
   password: string;
