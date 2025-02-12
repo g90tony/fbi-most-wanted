@@ -47,7 +47,7 @@ export function SignUpForm({
       router("/sign-in");
     },
     onError: (error: Error) => {
-      toast.success(error.message, { id: "new-user-signup" });
+      toast.error(error.message, { id: "new-user-signup" });
     },
   });
 
