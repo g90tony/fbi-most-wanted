@@ -8,6 +8,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { NavLink } from "react-router";
+import { cn } from "@/lib/utils";
 
 export default function AuthenticatedNavigationSidebarMainIContainer({
   items,
@@ -33,10 +35,15 @@ export default function AuthenticatedNavigationSidebarMainIContainer({
               asChild
               tooltip={item.title}
             >
-              <a href={item.url}>
+              <NavLink
+                className={(isActive) =>
+                  cn(isActive ? "text-blue-500" : "text-zinc-400")
+                }
+                to={item.url}
+              >
                 <item.icon />
                 <span>{item.title}</span>
-              </a>
+              </NavLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
