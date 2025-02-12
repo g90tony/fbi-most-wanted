@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Activity, Eye, HomeIcon, List } from "lucide-react";
+import { Eye, HomeIcon, List } from "lucide-react";
 
 import {
   Sidebar,
@@ -35,11 +35,6 @@ const data = {
       title: "My Watch List",
       url: "/my-list",
       icon: Eye,
-    },
-    {
-      title: "Recent Activity",
-      url: "/recent-activity",
-      icon: Activity,
     },
   ],
 };
