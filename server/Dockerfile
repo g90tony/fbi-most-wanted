@@ -12,6 +12,7 @@ CMD ["yarn", "start"]
 
 FROM base as dev
 ENV NODE_ENV=development
+ENV VITE_API_URL=http://localhost:5000/
 RUN yarn add nodemon -g && yarn install
 COPY . /src
 CMD ["yarn", "dev"]
