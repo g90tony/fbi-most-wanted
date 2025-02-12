@@ -28,5 +28,5 @@ model UserSession {
   user          User   @relation(fields: [userId], references: [id])
   userId        Int
   session_token String @unique
-  expiryTime    Int
+  expiryTime    BigInt
 }
