@@ -7,11 +7,13 @@ export default function GlobalLoader({ message, type }: TGlobalLoaderProps) {
     <div
       className={cn(
         "flex flex-col items-center justify-center w-auto h-auto m-auto rounded-xl",
-        type === "card" && "!bg-zinc-950"
+        type === "card" ? "!bg-zinc-950" : "!bg-black"
       )}
     >
       <Loader className="animate-spin text-blue-400" />
-      <p className="text-sm text-center text-blue-400 w-80 h-auto">{message}</p>
+      <p className="text-sm text-center text-blue-400 font-bold w-80 h-auto">
+        {message}
+      </p>
     </div>
   );
 }
