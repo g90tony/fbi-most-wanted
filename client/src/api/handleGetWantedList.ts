@@ -1,13 +1,13 @@
 import { TDashboardListResponse } from "@/types/apiResponse";
 import axios, { AxiosResponse } from "axios";
 
-export default async function handleDashboardGetInitialList(token: string) {
+export default async function handleGetWantedList(token: string, page: number) {
   let response: AxiosResponse | null = null;
 
   try {
     response = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}most-wanted/list`,
+      url: `${import.meta.env.VITE_API_URL}most-wanted/list/${page}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
