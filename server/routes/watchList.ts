@@ -12,7 +12,7 @@ const watchListRouter: Router = Router();
 
 watchListRouter.use(authenticateToken);
 
-watchListRouter.get("/list", handleFetchPaginatedWantedList);
+watchListRouter.get("/list/:page", handleFetchPaginatedWantedList);
 watchListRouter.get("/list/next", handleFetchPaginatedWantedListNextPage);
 watchListRouter.get("/categories", handleFetchWantedCategories);
 watchListRouter.get("/categories/:category", handleFetchCategoryWantedList);
