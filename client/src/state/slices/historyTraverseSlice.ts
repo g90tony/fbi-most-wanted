@@ -18,42 +18,34 @@ export const historyTraverseSlice = createSlice({
       action: PayloadAction<string>
     ) => {
       if (action.payload !== state.history[state.currentPageURI]) {
-        state.currentPageURI = [...state.history, action.payload].length - 1;
-        state.history = [...state.history, action.payload];
+        const newHistory = [...state.history];
+        let currentIndex = state.currentPageURI;
 
-        if (state.currentPageURI < 1) {
-          state.canGoBack = false;
+        if (currentIndex === newHistory.length - 1) {
+          newHistory.push(action.payload);
+          currentIndex = newHistory.length - 1;
         } else {
-          state.canGoBack = true;
+          newHistory.splice(currentIndex + 1, state.history.length - 1);
+          newHistory.push(action.payload);
+          currentIndex = newHistory.length - 1;
         }
+
+        state.history = [...newHistory];
+        state.currentPageURI = currentIndex;
       }
     },
     GO_BACK_ON_HISTORY: (state: THistoryTraverserState) => {
-      if (state.currentPageURI !== 0) {
-        const currentIndex = state.currentPageURI - 1;
+      let currentIndex = state.currentPageURI;
+      if (state.currentPageURI > 0) {
+        currentIndex = currentIndex - 1;
         state.currentPageURI = currentIndex;
-        state.canGoForth = true;
-      } else {
-        state.canGoBack = false;
-      }
-
-      if (state.currentPageURI < 1) {
-        state.canGoBack = false;
-      } else {
-        state.canGoBack = true;
       }
     },
     GO_FORTH_INTO_HISTORY: (state: THistoryTraverserState) => {
-      if (state.currentPageURI !== state.history.length - 1) {
-        const currentIndex = state.currentPageURI - 1;
+      let currentIndex = state.currentPageURI;
+      if (state.currentPageURI < state.history.length - 1) {
+        currentIndex = currentIndex + 1;
         state.currentPageURI = currentIndex;
-        state.canGoBack = true;
-      }
-
-      if (state.currentPageURI > state.history.length - 1) {
-        state.canGoForth = false;
-      } else {
-        state.canGoForth = true;
       }
     },
     CLEAR_HISTORY: (state: THistoryTraverserState) => {

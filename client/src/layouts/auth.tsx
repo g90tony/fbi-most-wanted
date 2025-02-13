@@ -44,27 +44,30 @@ export default function AuthLayout() {
   useSessionTimeout();
 
   const handleGoBack = useCallback(() => {
-    if (historyTraverseState.canGoBack) {
+    if (historyTraverseState.currentPageURI > 0) {
       router(
         historyTraverseState.history[historyTraverseState.currentPageURI - 1],
         {
           state: { trigger: "goBack" },
         }
       );
-      dispatch(GO_BACK_ON_HISTORY());
     }
+    dispatch(GO_BACK_ON_HISTORY());
   }, [dispatch, historyTraverseState, router]);
 
   const handleGoForth = useCallback(() => {
-    if (historyTraverseState.canGoForth) {
+    if (
+      historyTraverseState.currentPageURI <
+      historyTraverseState.history.length - 1
+    ) {
       router(
         historyTraverseState.history[historyTraverseState.currentPageURI + 1],
         {
           state: { trigger: "goForth" },
         }
       );
-      dispatch(GO_FORTH_INTO_HISTORY());
     }
+    dispatch(GO_FORTH_INTO_HISTORY());
   }, [dispatch, historyTraverseState, router]);
 
   const handlePageHistoryNavigation = useCallback(() => {
@@ -86,15 +89,7 @@ export default function AuthLayout() {
   useMemo(() => {
     handlePageHistoryNavigation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [authState.isAuthenticated, location]);
-
-  const canGoBack = useMemo(() => {
-    return historyTraverseState.canGoBack;
-  }, [historyTraverseState]);
-
-  const canGoForth = useMemo(() => {
-    return historyTraverseState.canGoForth;
-  }, [historyTraverseState]);
+  }, [location]);
 
   useEffect(() => {
     if (authState.isAuthenticated === false) {
@@ -118,14 +113,21 @@ export default function AuthLayout() {
               <Button
                 className="flex flex-row items-center justify-center w-8 h-8 bg-zinc-900 hover:bg-zinc-950 text-zinc-700 hover:text-zinc-800 rounded-full mx-1"
                 onClick={handleGoBack}
-                disabled={!canGoBack}
+                disabled={
+                  historyTraverseState.currentPageURI > 0 ? false : true
+                }
               >
                 <ChevronLeft />
               </Button>
               <Button
                 className="flex flex-row items-center justify-center w-8 h-8 bg-zinc-900 hover:bg-zinc-950 text-zinc-700 hover:text-zinc-800 rounded-full mx-1"
                 onClick={handleGoForth}
-                disabled={!canGoForth}
+                disabled={
+                  historyTraverseState.currentPageURI <
+                  historyTraverseState.history.length - 1
+                    ? false
+                    : true
+                }
               >
                 <ChevronRight />
               </Button>
