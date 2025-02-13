@@ -7,4 +7,15 @@ export type TUserSignInResponse = {
   sessionToken: string;
 };
 
-export type TDashboardListResponse = TWantedPersonMeta[];
+export type TWantedListFilteredResponse = {
+  filterType: "category" | "nationality" | "race";
+  filterQuery: string;
+  filteredListData: TWantedListResponse;
+};
+
+export type TWantedListSearchQueryResponse = {
+  searchQuery: string;
+  searchedListData: TWantedListResponse;
+};
+
+export type TWantedListResponse = TWantedPersonMeta[];
