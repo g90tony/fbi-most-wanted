@@ -1,4 +1,4 @@
-import { TDashboardListResponse } from "@/types/apiResponse";
+import { TWantedListResponse } from "@/types/apiResponse";
 import axios, { AxiosResponse } from "axios";
 
 export default async function handleDashboardGetCategoryList(
@@ -22,7 +22,7 @@ export default async function handleDashboardGetCategoryList(
   if (response !== null && response.status === 200) {
     return {
       status: "success",
-      data: response.data as TDashboardListResponse,
+      data: response.data as TWantedListResponse,
     };
   }
 }

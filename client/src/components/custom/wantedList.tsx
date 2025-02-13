@@ -1,7 +1,7 @@
 import handleGetWantedList from "@/api/handleGetWantedList";
 import isDevEnv from "@/lib/isDevEnv";
 import { AuthState } from "@/state/slices/authStateSlice";
-import { TDashboardListResponse } from "@/types/apiResponse";
+import { TWantedListResponse } from "@/types/apiResponse";
 import { TAuthState } from "@/types/state";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -20,7 +20,7 @@ export default function WantedList() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  const [wantedList, setWantedList] = useState<TDashboardListResponse>([]);
+  const [wantedList, setWantedList] = useState<TWantedListResponse>([]);
 
   function handleViewWantedPerson(personUID: string) {
     router(`/wanted-persons/${personUID}`, {
