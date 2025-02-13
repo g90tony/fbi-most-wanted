@@ -11,7 +11,7 @@ import { Card, CardContent } from "../ui/card";
 
 import handleDashboardGetCategories from "@/api/handleDashboardGetCategories";
 
-export default function CategoriesCategoryList() {
+export default function WantedCategoryList() {
   const authState: TAuthState = useSelector(AuthState);
   const router = useNavigate();
 
@@ -33,7 +33,9 @@ export default function CategoriesCategoryList() {
         }
       });
 
-    router(`/wanted-categories/${wantedCategory}`);
+    router(`/wanted-categories/${wantedCategory}`, {
+      state: { trigger: "user" },
+    });
   }
 
   const handleFetchData = useCallback(
