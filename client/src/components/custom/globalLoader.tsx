@@ -11,7 +11,7 @@ export default function GlobalLoader({ message, type }: TGlobalLoaderProps) {
       )}
     >
       <Loader className="animate-spin text-blue-400" />
-      <p className="text-sm text-center text-blue-400 font-bold w-80 h-auto">
+      <p className="text-sm text-center text-blue-400 font-bold w-80 h-auto mt-4">
         {message}
       </p>
     </div>
