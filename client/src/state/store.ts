@@ -4,9 +4,11 @@ import storageSession from "redux-persist/lib/storage/session";
 
 import { persistReducer, persistStore } from "redux-persist";
 import { authStateSlice } from "./slices/authStateSlice";
+import { historyTraverseSlice } from "./slices/historyTraverseSlice";
 
 const combinedReducers = combineReducers({
   [authStateSlice.name]: authStateSlice.reducer,
+  [historyTraverseSlice.name]: historyTraverseSlice.reducer,
 });
 
 const persistConfig = {
