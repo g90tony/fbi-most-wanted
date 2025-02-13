@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { TWantedListState } from "@/types/state";
+import { TWantedListRenderTypes, TWantedListState } from "@/types/state";
 import {
   TWantedListFilteredResponse,
   TWantedListResponse,
@@ -11,7 +11,10 @@ import { RootState } from "../store";
 const initialState: TWantedListState = {
   currentPage: 1,
   wantedList: [],
+  listType: "normal",
   filteredWantedList: [],
+  categorizedWantedList: [],
+  myWantedList: [],
   filters: null,
   searchQuery: "",
 };
@@ -22,16 +25,65 @@ export const wantedListSlice = createSlice({
   reducers: {
     LOAD_LIST_DATA: (
       state: TWantedListState,
-      action: PayloadAction<TWantedListResponse>
+      action: PayloadAction<{
+        listType: TWantedListRenderTypes;
+        list: TWantedListResponse;
+      }>
     ) => {
-      state.wantedList = action.payload;
+      switch (action.payload.listType) {
+        case "categorized":
+          state.categorizedWantedList = [...action.payload.list];
+
+          break;
+        case "normal":
+          state.wantedList = [...action.payload.list];
+
+          break;
+        case "personal":
+          state.myWantedList = [...action.payload.list];
+
+          break;
+        case "filtered":
+          state.filteredWantedList = [...action.payload.list];
+
+          break;
+      }
+    },
+    LOAD_NEXT_PAGE: (state: TWantedListState) => {
+      state.currentPage = state.currentPage + 1;
     },
     LOAD_NEXT_PAGE_LIST_DATA: (
       state: TWantedListState,
-      action: PayloadAction<TWantedListResponse>
+      action: PayloadAction<{
+        listType: TWantedListRenderTypes;
+        list: TWantedListResponse;
+      }>
     ) => {
-      state.wantedList = action.payload;
-      state.currentPage = state.currentPage + 1;
+      switch (action.payload.listType) {
+        case "categorized":
+          state.categorizedWantedList = [
+            ...state.wantedList,
+            ...action.payload.list,
+          ];
+          state.listType = action.payload.listType;
+
+          break;
+        case "normal":
+          state.wantedList = [...state.wantedList, ...action.payload.list];
+          state.listType = action.payload.listType;
+
+          break;
+        case "personal":
+          state.myWantedList = [...state.myWantedList, ...action.payload.list];
+          state.listType = action.payload.listType;
+
+          break;
+        case "filtered":
+          state.myWantedList = [...state.myWantedList, ...action.payload.list];
+          state.listType = action.payload.listType;
+
+          break;
+      }
     },
     LOAD_FILTERED_DATA: (
       state: TWantedListState,
@@ -46,6 +98,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
+          state.listType = "filtered";
           break;
         case "nationality":
           state.filters = {
@@ -55,6 +108,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
+          state.listType = "filtered";
           break;
         case "race":
           state.filters = {
@@ -64,6 +118,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
+          state.listType = "filtered";
           break;
       }
     },
@@ -73,25 +128,37 @@ export const wantedListSlice = createSlice({
     ) => {
       state.searchQuery = action.payload.searchQuery;
       state.filteredWantedList = action.payload.searchedListData;
+      state.listType = "normal";
     },
     CLEAR_WANTED_LIST_DATA: (state: TWantedListState) => {
       state.wantedList = [];
+      state.myWantedList = [];
+      state.categorizedWantedList = [];
       state.currentPage = 1;
+
+      state.listType = "normal";
     },
     CLEAR_FILTER_QUERY_DATA: (state: TWantedListState) => {
       state.filters = null;
 
       state.filteredWantedList = [];
+      state.currentPage = 1;
+
+      state.listType = "normal";
     },
     CLEAR_SEARCH_QUERY_DATA: (state: TWantedListState) => {
       state.searchQuery = "";
       state.filteredWantedList = [];
+      state.currentPage = 1;
+
+      state.listType = "normal";
     },
   },
 });
 
 export const {
   LOAD_LIST_DATA,
+  LOAD_NEXT_PAGE,
   LOAD_NEXT_PAGE_LIST_DATA,
   LOAD_FILTERED_DATA,
   LOAD_SEARCH_QUERY_DATA,
@@ -99,5 +166,5 @@ export const {
   CLEAR_FILTER_QUERY_DATA,
   CLEAR_SEARCH_QUERY_DATA,
 } = wantedListSlice.actions;
-export const WantedListState = (state: RootState) => state.wantedListState
+export const WantedListState = (state: RootState) => state.wantedListState;
 export default wantedListSlice.reducer;
