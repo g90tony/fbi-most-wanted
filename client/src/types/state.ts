@@ -1,3 +1,5 @@
+import { TWantedListResponse } from "./apiResponse";
+
 export type TAuthAuthenticatedUser = {
   id: number;
   name: string;
@@ -15,4 +17,16 @@ export type THistoryTraverserState = {
   history: string[];
   canGoBack: boolean;
   canGoForth: boolean;
+};
+
+export type TWantedListState = {
+  currentPage: number;
+  wantedList: TWantedListResponse;
+  filteredWantedList: TWantedListResponse;
+  filters: {
+    category: string;
+    nationality: string;
+    race: string;
+  } | null;
+  searchQuery: string | null;
 };
