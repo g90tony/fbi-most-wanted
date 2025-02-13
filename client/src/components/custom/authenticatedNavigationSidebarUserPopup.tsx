@@ -1,6 +1,5 @@
 import { ChevronDown, LogOut } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,21 +39,12 @@ export function AuthenticatedNavigationSidebarUserPopup({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-zinc-800 data-[state=open]:text-white hover:bg-black hover:text-white w-auto"
+              className="data-[state=open]:bg-zinc-950 text-zinc-700 bg-zinc-900 rounded-full data-[state=open]:text-zinc-800 hover:bg-zinc-950 hover:text-zinc-800 w-auto h-12"
             >
-              <Avatar className="h-8 w-8 rounded-lg text-white">
-                <AvatarImage
-                  src={user.avatar}
-                  alt={user.name}
-                  className="text-white"
-                />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              {/* <div className="grid flex-1 text-left text-sm leading-tight  text-white">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
-              </div> */}
-              <ChevronDown className="ml-auto size-4 text-white" />
+              <p className="capitalize hover:text-zinc-600 font-bold rounded-lg">{`${
+                String(user.name).split(" ")[0][0]
+              }${String(user.name).split(" ")[1][0]}`}</p>
+              <ChevronDown className="size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -66,10 +56,10 @@ export function AuthenticatedNavigationSidebarUserPopup({
             <DropdownMenuLabel className="font-normal p-0">
               <div className="flex flex-col items-center !bg-zinc-950/50  gap-2 px-2 py-2 text-left text-sm">
                 <div className="flex flex-col w-full text-left text-sm leading-tight ">
-                  <span className="truncate text-sm text-blue-400 font-bold mb-1">
+                  <span className="truncate text-sm text-white font-bold mb-1">
                     {user.name}
                   </span>
-                  <span className="truncate text-xs text-zinc-500">
+                  <span className="truncate text-xs text-zinc-300">
                     {user.email}
                   </span>
                 </div>
@@ -77,7 +67,7 @@ export function AuthenticatedNavigationSidebarUserPopup({
             </DropdownMenuLabel>
             <DropdownMenuItem
               onClick={handleLogOut}
-              className="bg-rose-600 hover:!bg-rose-950 text-white border-[0px] font-bold h-12 my-0"
+              className="bg-rose-600 hover:!bg-rose-950 text-white border-[0px] font-bold h-10 my-0"
             >
               <LogOut />
               Log out
