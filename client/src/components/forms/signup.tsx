@@ -44,7 +44,9 @@ export function SignUpForm({
         { id: "new-user-signup" }
       );
 
-      router("/sign-in");
+      router("/sign-in", {
+        state: { trigger: "user" },
+      });
     },
     onError: (error: Error) => {
       toast.error(error.message, { id: "new-user-signup" });
