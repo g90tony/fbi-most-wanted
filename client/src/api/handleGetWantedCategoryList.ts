@@ -1,7 +1,7 @@
 import { TWantedListResponse } from "@/types/apiResponse";
 import axios, { AxiosResponse } from "axios";
 
-export default async function handleDashboardGetCategoryList(
+export default async function handleGetWantedCategoryList(
   token: string,
   category: string
 ) {
