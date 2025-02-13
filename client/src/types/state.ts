@@ -19,10 +19,19 @@ export type THistoryTraverserState = {
   canGoForth: boolean;
 };
 
+export type TWantedListRenderTypes =
+  | "normal"
+  | "filtered"
+  | "categorized"
+  | "personal";
+
 export type TWantedListState = {
   currentPage: number;
+  listType: TWantedListRenderTypes;
   wantedList: TWantedListResponse;
+  categorizedWantedList: TWantedListResponse;
   filteredWantedList: TWantedListResponse;
+  myWantedList: TWantedListResponse;
   filters: {
     category: string;
     nationality: string;
