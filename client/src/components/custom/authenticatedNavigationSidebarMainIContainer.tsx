@@ -8,8 +8,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { NavLink } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { useCallback } from "react";
 
 export default function AuthenticatedNavigationSidebarMainIContainer({
   items,
@@ -25,25 +27,40 @@ export default function AuthenticatedNavigationSidebarMainIContainer({
     }[];
   }[];
 }) {
+  const router = useNavigate();
+  const location = useLocation();
+
+  const isActive = useCallback(
+    (index: number) => {
+      return location !== null && location.pathname === items[index].url
+        ? true
+        : false;
+    },
+    [items, location]
+  );
+
   return (
     <SidebarGroup className="!bg-zinc-950">
       <SidebarMenu className="!bg-zinc-950">
         {items.map((item, index) => (
           <SidebarMenuItem key={index} className="!bg-zinc-950">
-            <SidebarMenuButton
-              className="!bg-zinc-950"
-              asChild
-              tooltip={item.title}
-            >
-              <NavLink
-                className={(isActive) =>
-                  cn(isActive ? "text-blue-500" : "text-zinc-400")
+            <SidebarMenuButton asChild tooltip={item.title}>
+              <Button
+                className={cn(
+                  "bg-zinc-950 hover:bg-zinc-900 hover:text-700 cursor-pointer p-2 rounded-lg",
+                  isActive(index) ? "text-blue-500 bg-black" : "text-zinc-400"
+                )}
+                onClick={() =>
+                  router(item.url, {
+                    state: { trigger: "user" },
+                  })
                 }
-                to={item.url}
               >
-                <item.icon />
-                <span>{item.title}</span>
-              </NavLink>
+                <div className="flex flex-row justify-start items-center w-100 h-auto gap-2">
+                  <item.icon />
+                  <span>{item.title}</span>
+                </div>
+              </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
