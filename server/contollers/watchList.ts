@@ -8,9 +8,15 @@ export async function handleFetchPaginatedWantedList(
 ) {
   const allTargets = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
+    url: `https://api.fbi.gov/wanted/v1/list/`,
     params: {
-      page: 1,
+      page: req.params.page,
+    },
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -34,7 +40,7 @@ export async function handleFetchPaginatedWantedList(
 
     res.status(200).json(resData);
   } else {
-    resData = [...allTargets!.data].map((person: any) => ({
+    resData = [...allTargets!.data.items].map((person: any) => ({
       uid: person.uid,
       title: person.title,
       publication: person.publication,
@@ -53,11 +59,14 @@ export async function handleFetchPaginatedWantedList(
 export async function handleFetchWantedPerson(req: Request, res: Response) {
   const personUID = req.params.personUID;
 
-  const allTargets = await axios({
+  const target = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
-    params: {
-      page: 1,
+    url: `https://api.fbi.gov/@wanted-person/${personUID}`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -70,7 +79,9 @@ export async function handleFetchWantedPerson(req: Request, res: Response) {
 
   let resData: any | null = null;
 
-  if (allTargets === null || allTargets === undefined) {
+  if (target === null || target === undefined) {
+    console.log("target", target);
+
     [...fallbackData].forEach((person: any) => {
       if (person.uid === personUID) {
         resData = {
@@ -101,27 +112,25 @@ export async function handleFetchWantedPerson(req: Request, res: Response) {
       res.status(404);
     }
   } else {
-    [...allTargets!.data].forEach((person: any) => {
-      if (person.uid === personUID) {
-        resData = {
-          uid: person.uid,
-          occupations: person.occupations !== null ? person.occupations : [],
-          sex: person.sex !== null ? person.sex : "--",
-          dates_of_birth_used:
-            person.dates_of_birth_used !== null
-              ? person.dates_of_birth_used
-              : [],
-          caution: person.caution !== null ? person.caution : "--",
-          nationality: person.nationality !== null ? person.nationality : "--",
-          subjects: person.subjects !== null ? person.subjects : [],
-          aliases: person.aliases !== null ? person.aliases : [],
-          title: person.title !== null ? person.title : "--",
-          languages: person.languages !== null ? person.languages : [],
-          details: person.details !== null ? person.details : "--",
-          image: person.images[0].large,
-        };
-      }
-    });
+    resData = {
+      uid: target.data.uid,
+      occupations:
+        target.data.occupations !== null ? target.data.occupations : [],
+      sex: target.data.sex !== null ? target.data.sex : "--",
+      dates_of_birth_used:
+        target.data.dates_of_birth_used !== null
+          ? target.data.dates_of_birth_used
+          : [],
+      caution: target.data.caution !== null ? target.data.caution : "--",
+      nationality:
+        target.data.nationality !== null ? target.data.nationality : "--",
+      subjects: target.data.subjects !== null ? target.data.subjects : [],
+      aliases: target.data.aliases !== null ? target.data.aliases : [],
+      title: target.data.title !== null ? target.data.title : "--",
+      languages: target.data.languages !== null ? target.data.languages : [],
+      details: target.data.details !== null ? target.data.details : "--",
+      image: target.data.images[0].large,
+    };
 
     if (resData !== null) {
       res.status(200).json(resData);
@@ -150,9 +159,15 @@ export async function handleFetchCategoryWantedList(
 
   const allTargets = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
+    url: `https://api.fbi.gov/wanted/v1/list`,
     params: {
-      page: 1,
+      page: req.params.page,
+    },
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -180,7 +195,7 @@ export async function handleFetchCategoryWantedList(
 
     res.status(200).json(resData);
   } else {
-    allTargets!.data.forEach((person: any) => {
+    allTargets!.data.items.forEach((person: any) => {
       if (String(person.subjects[0]).toLowerCase().includes(reqCategory)) {
         resData.push({
           uid: person.uid,
@@ -203,9 +218,15 @@ export async function handleFetchCategoryWantedList(
 export async function handleFetchWantedCategories(req: Request, res: Response) {
   const allTargets = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
+    url: `https://api.fbi.gov/wanted/v1/list`,
     params: {
       page: req.body.page,
+    },
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -239,7 +260,7 @@ export async function handleFetchWantedCategories(req: Request, res: Response) {
   } else {
     const categories: string[] = [];
 
-    [...allTargets!.data].forEach((person: any) => {
+    [...allTargets!.data.items].forEach((person: any) => {
       let alreadyExists: boolean = false;
 
       categories.forEach((category) => {
@@ -267,9 +288,15 @@ export async function handleFetchPaginatedWantedListNextPage(
 ) {
   const allTargets = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
+    url: `https://api.fbi.gov/wanted/v1/list`,
     params: {
       page: req.body.page,
+    },
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -304,9 +331,15 @@ export async function handleFetchPaginatedWantedListNextPage(
 export async function utilFindWantedPerson(personUid: string) {
   const allTargets = await axios({
     method: "GET",
-    url: "https://api.fbi.gov/wanted/v1/list",
+    url: `https://api.fbi.gov/wanted/v1/list`,
     params: {
       page: 1,
+    },
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     },
   })
     .then((data) => data)
@@ -344,7 +377,7 @@ export async function utilFindWantedPerson(personUid: string) {
 
     return resData;
   } else {
-    [...allTargets!.data].forEach((person: any) => {
+    [...allTargets!.data.items].forEach((person: any) => {
       if (person.uid === personUid) {
         resData = {
           uid: person.uid,
