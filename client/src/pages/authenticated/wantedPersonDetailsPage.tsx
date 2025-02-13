@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import { TWantedPersonDetails } from "../../types/types";
 import handleDashboardGetPersonDetails from "@/api/handleDashboardGetPersonDetails";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { TAuthState } from "@/types/state";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthState, DEAUTHENTICATE_USER } from "@/state/slices/authStateSlice";
 import isDevEnv from "@/lib/isDevEnv";
 import { cn } from "@/lib/utils";
 import GlobalLoader from "@/components/custom/globalLoader";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import handleDashboardAddPersonToWatchList from "@/api/handleDashboardAddPersonToWatchList";
+import { toast } from "sonner";
 
 export default function WantedPersonDetailsPage() {
   const params = useParams();
   const dispatch = useDispatch();
+  const router = useNavigate();
 
   const authState: TAuthState = useSelector(AuthState);
 
@@ -31,6 +36,43 @@ export default function WantedPersonDetailsPage() {
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const handleAddToPersonalList = useCallback(
+    async function (selectedPersonTitle: string, selectedPersonUid: string) {
+      if (authState.isAuthenticated && authState.authenticatedUser !== null) {
+        try {
+          const response = await handleDashboardAddPersonToWatchList(
+            authState.authenticatedUser.token,
+            selectedPersonUid
+          );
+
+          if (response) {
+            toast.success(
+              `${selectedPersonTitle} wass added successfully to your watch list`,
+              {
+                id: "add-to-watchlist",
+              }
+            );
+          }
+        } catch (error) {
+          if (isDevEnv) {
+            console.error("FETCH_DASHBOARD_FAILURE", error);
+          }
+          toast.error(
+            "There was a problem loading the data. Please try again later",
+            {
+              id: "add-to-watchlist",
+            }
+          );
+        }
+      } else {
+        router("/sign-up", {
+          state: { trigger: "user" },
+        });
+      }
+    },
+    [authState.authenticatedUser, authState.isAuthenticated, router]
+  );
 
   const fetchData = useCallback(
     async function () {
@@ -52,6 +94,7 @@ export default function WantedPersonDetailsPage() {
           }
         } catch (error) {
           if (isDevEnv) console.error("FETCH_PERSON_DETAILS_FAILURE", error);
+          setIsLoading(false);
         }
       } else {
         dispatch(DEAUTHENTICATE_USER());
@@ -91,6 +134,20 @@ export default function WantedPersonDetailsPage() {
                   className="w-[400px] h-[400px] object-cover rounded-xl"
                 />
                 <div className="flex flex-col item-start justify-start w-full h-full">
+                  <div className="flex flex-row justify-end items-center w-full">
+                    <Button
+                      onClick={() =>
+                        handleAddToPersonalList(
+                          personDetails.title,
+                          personDetails.uid
+                        )
+                      }
+                      className="text-xs text-blue-700 bg-white hover:bg-blue-950 hover:text-blue-400  font-bold rounded-xl border-0 w-[150px] h-[40px] mb-4"
+                    >
+                      Add to WatchList <Plus />
+                    </Button>
+                  </div>
+
                   <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4">
                     <h1 className="text-5xl capitalize text-white text-start font-bold w-full h-auto">
                       {personDetails.title.toLowerCase()}
