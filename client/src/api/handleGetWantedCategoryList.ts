@@ -3,14 +3,17 @@ import axios, { AxiosResponse } from "axios";
 
 export default async function handleGetWantedCategoryList(
   token: string,
-  category: string
+  category: string,
+  page: number
 ) {
   let response: AxiosResponse | null = null;
 
   try {
     response = await axios({
       method: "GET",
-      url: `${import.meta.env.VITE_API_URL}most-wanted/categories/${category}`,
+      url: `${
+        import.meta.env.VITE_API_URL
+      }most-wanted/categories/${category}/${page}`,
       headers: {
         Authorization: `Bearer ${token}`,
       },
