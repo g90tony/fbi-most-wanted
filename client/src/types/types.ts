@@ -26,3 +26,8 @@ export type TWantedPersonDetails = {
   details: string;
   image: string;
 };
+
+export type TFilterParam = {
+  type: "category" | "nationality" | "race" | "search";
+  query: string;
+};
