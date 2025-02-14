@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import GlobalLoader from "@/components/custom/globalLoader";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import handleDashboardAddPersonToWatchList from "@/api/handleDashboardAddPersonToWatchList";
+import handlePostWantedMyListNewPerson from "@/api/handlePostWantedMyListNewPerson";
 import { toast } from "sonner";
 
 export default function WantedPersonDetailsPage() {
@@ -41,7 +41,7 @@ export default function WantedPersonDetailsPage() {
     async function (selectedPersonTitle: string, selectedPersonUid: string) {
       if (authState.isAuthenticated && authState.authenticatedUser !== null) {
         try {
-          const response = await handleDashboardAddPersonToWatchList(
+          const response = await handlePostWantedMyListNewPerson(
             authState.authenticatedUser.token,
             selectedPersonUid
           );
