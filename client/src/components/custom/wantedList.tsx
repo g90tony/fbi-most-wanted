@@ -17,6 +17,10 @@ import {
 import WantedListItem from "./wantedListItem";
 import GlobalEmptyPlaceholder from "./globalEmptyPlaceholder";
 import { WantedListProps } from "@/types/props";
+import handleGetWantedCategoryList from "@/api/handleGetWantedCategoryList";
+import handleGetWantedFilteredList from "@/api/handleGetWantedFilteredList";
+import { TFilterParam } from "@/types/types";
+import handleGetWantedMyList from "@/api/handleGetWantedMyList";
 
 export default function WantedList({ type = "normal" }: WantedListProps) {
   const authState: TAuthState = useSelector(AuthState);
@@ -31,6 +35,36 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
 
+  const getStateFilter = useCallback(() => {
+    if (
+      wantedListState.filters !== null &&
+      wantedListState.filters.category !== ""
+    ) {
+      return {
+        type: "category",
+        query: wantedListState.filters.category,
+      } as TFilterParam;
+    } else if (
+      wantedListState.filters !== null &&
+      wantedListState.filters.nationality !== ""
+    ) {
+      return {
+        type: "nationality",
+        query: wantedListState.filters.nationality,
+      } as TFilterParam;
+    } else if (
+      wantedListState.filters !== null &&
+      wantedListState.filters.race !== ""
+    ) {
+      return {
+        type: "race",
+        query: wantedListState.filters.race,
+      } as TFilterParam;
+    } else {
+      return null;
+    }
+  }, [wantedListState.filters]);
+
   const handleViewWantedPerson = useCallback(
     function (personUID: string) {
       router(`/wanted-persons/${personUID}`, {
@@ -43,7 +77,6 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
   const handleFetchMyWantedListData = useCallback(
     async function () {
       if (authState.isAuthenticated && authState.authenticatedUser !== null) {
-        setIsEmpty(false);
         if (
           wantedListState.currentPage === 1 &&
           wantedListState.myWantedList.length === 0
@@ -51,7 +84,7 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
           setIsLoading(true);
 
         try {
-          const response = await handleGetWantedList(
+          const response = await handleGetWantedMyList(
             authState.authenticatedUser.token,
             wantedListState.currentPage
           );
@@ -68,6 +101,7 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
               );
             }
             setIsLoading(false);
+            setIsEmpty(false);
           }
         } catch (error) {
           if (isDevEnv) {
@@ -95,7 +129,8 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
   const handleFetchCategorizedWantedListData = useCallback(
     async function () {
       if (authState.isAuthenticated && authState.authenticatedUser !== null) {
-        setIsEmpty(false);
+        const category = params.category!;
+
         if (
           wantedListState.currentPage === 1 &&
           wantedListState.categorizedWantedList.length === 0
@@ -103,8 +138,9 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
           setIsLoading(true);
 
         try {
-          const response = await handleGetWantedList(
+          const response = await handleGetWantedCategoryList(
             authState.authenticatedUser.token,
+            category,
             wantedListState.currentPage
           );
 
@@ -120,13 +156,14 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
               );
             }
             setIsLoading(false);
+            setIsEmpty(false);
           }
         } catch (error) {
           if (isDevEnv) {
             console.error("FETCH_DASHBOARD_FAILURE", error);
           }
           setIsLoading(false);
-          setIsEmpty(false);
+          setIsEmpty(true);
 
           toast.error(
             "There was a problem loading the data. Please try again later",
@@ -141,22 +178,33 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
         });
       }
     },
-    [authState, wantedListState, dispatch, router, type]
+    [authState, params.category, wantedListState, dispatch, type, router]
   );
 
   const handleFetchFilteredListData = useCallback(
     async function () {
       if (authState.isAuthenticated && authState.authenticatedUser !== null) {
-        setIsEmpty(false);
         if (
           wantedListState.currentPage === 1 &&
           wantedListState.filteredWantedList.length === 0
         )
           setIsLoading(true);
 
+        let filterParam: TFilterParam | null = null;
+
+        if (getStateFilter() !== null) {
+          filterParam = getStateFilter();
+        } else {
+          filterParam = {
+            type: "search",
+            query: wantedListState.searchQuery,
+          } as TFilterParam;
+        }
+
         try {
-          const response = await handleGetWantedList(
+          const response = await handleGetWantedFilteredList(
             authState.authenticatedUser.token,
+            filterParam!,
             wantedListState.currentPage
           );
 
@@ -172,13 +220,14 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
               );
             }
             setIsLoading(false);
+            setIsEmpty(false);
           }
         } catch (error) {
           if (isDevEnv) {
             console.error("FETCH_DASHBOARD_FAILURE", error);
           }
           setIsLoading(false);
-          setIsEmpty(false);
+          setIsEmpty(true);
 
           toast.error(
             "There was a problem loading the data. Please try again later",
@@ -193,13 +242,12 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
         });
       }
     },
-    [authState, wantedListState, dispatch, router, type]
+    [authState, wantedListState, getStateFilter, dispatch, type, router]
   );
 
   const handleFetchWantedListData = useCallback(
     async function () {
       if (authState.isAuthenticated && authState.authenticatedUser !== null) {
-        setIsEmpty(false);
         if (
           wantedListState.currentPage === 1 &&
           wantedListState.wantedList.length === 0
@@ -224,13 +272,14 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
               );
             }
             setIsLoading(false);
+            setIsEmpty(false);
           }
         } catch (error) {
           if (isDevEnv) {
             console.error("FETCH_DASHBOARD_FAILURE", error);
           }
           setIsLoading(false);
-          setIsEmpty(false);
+          setIsEmpty(true);
 
           toast.error(
             "There was a problem loading the data. Please try again later",
@@ -413,7 +462,7 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
 
   useMemo(() => {
     if (wantedListState.currentPage > 1) {
-      switch (wantedListState.listType) {
+      switch (type) {
         case "filtered":
           handleFetchFilteredListData();
 
