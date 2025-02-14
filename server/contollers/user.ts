@@ -81,8 +81,26 @@ export async function handleAddPersonToUserWatchList(
         user_id: req.user.id,
       },
     })
-    .then((data) => {
-      data !== null ? data.id : null;
+    .then(async (data) => {
+      if (data !== null) {
+        return data.id;
+      } else {
+        return await prismaClient.userList
+          .create({
+            data: {
+              user_id: req.user.id,
+            },
+          })
+          .then((data) => data.id)
+          .catch((error) => {
+            if (process.env.ENV === "development")
+              console.error("userSessionData error", error);
+
+            res.status(500).json({
+              message: { ...(error as Error) }.message,
+            });
+          });
+      }
     })
     .catch((error) => {
       if (process.env.ENV === "development")
