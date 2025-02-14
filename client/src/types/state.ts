@@ -27,7 +27,6 @@ export type TWantedListRenderTypes =
 
 export type TWantedListState = {
   currentPage: number;
-  listType: TWantedListRenderTypes;
   wantedList: TWantedListResponse;
   categorizedWantedList: TWantedListResponse;
   filteredWantedList: TWantedListResponse;

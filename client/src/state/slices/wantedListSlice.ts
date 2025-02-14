@@ -11,7 +11,6 @@ import { RootState } from "../store";
 const initialState: TWantedListState = {
   currentPage: 1,
   wantedList: [],
-  listType: "normal",
   filteredWantedList: [],
   categorizedWantedList: [],
   myWantedList: [],
@@ -65,22 +64,18 @@ export const wantedListSlice = createSlice({
             ...state.wantedList,
             ...action.payload.list,
           ];
-          state.listType = action.payload.listType;
 
           break;
         case "normal":
           state.wantedList = [...state.wantedList, ...action.payload.list];
-          state.listType = action.payload.listType;
 
           break;
         case "personal":
           state.myWantedList = [...state.myWantedList, ...action.payload.list];
-          state.listType = action.payload.listType;
 
           break;
         case "filtered":
           state.myWantedList = [...state.myWantedList, ...action.payload.list];
-          state.listType = action.payload.listType;
 
           break;
       }
@@ -98,7 +93,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
-          state.listType = "filtered";
+
           break;
         case "nationality":
           state.filters = {
@@ -108,7 +103,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
-          state.listType = "filtered";
+
           break;
         case "race":
           state.filters = {
@@ -118,7 +113,7 @@ export const wantedListSlice = createSlice({
           };
 
           state.filteredWantedList = action.payload.filteredListData;
-          state.listType = "filtered";
+
           break;
       }
     },
@@ -128,30 +123,23 @@ export const wantedListSlice = createSlice({
     ) => {
       state.searchQuery = action.payload.searchQuery;
       state.filteredWantedList = action.payload.searchedListData;
-      state.listType = "normal";
     },
     CLEAR_WANTED_LIST_DATA: (state: TWantedListState) => {
       state.wantedList = [];
       state.myWantedList = [];
       state.categorizedWantedList = [];
       state.currentPage = 1;
-
-      state.listType = "normal";
     },
     CLEAR_FILTER_QUERY_DATA: (state: TWantedListState) => {
       state.filters = null;
 
       state.filteredWantedList = [];
       state.currentPage = 1;
-
-      state.listType = "normal";
     },
     CLEAR_SEARCH_QUERY_DATA: (state: TWantedListState) => {
       state.searchQuery = "";
       state.filteredWantedList = [];
       state.currentPage = 1;
-
-      state.listType = "normal";
     },
   },
 });
