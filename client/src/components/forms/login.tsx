@@ -49,6 +49,7 @@ export function LoginForm({
           email: userAuthObj.email,
           name: userAuthObj.name,
           token: userAuthObj.sessionToken,
+          tokenExpiryTime: userAuthObj.tokenExpiryTime,
         })
       );
 
@@ -96,7 +97,7 @@ export function LoginForm({
                     {...field}
                     className="flex flex-col items-center gap-2 mb-6"
                   >
-                    <FormLabel className="text-blue-100 font-bold mb-2">
+                    <FormLabel className="text-blue-100 font-bold mb-2 w-full">
                       Email
                     </FormLabel>
                     <Input
