@@ -10,17 +10,17 @@ const userRouter: Router = Router();
 userRouter.use(authenticateToken);
 
 userRouter.get(
-  "/my-list/check/:personUID",
+  "/check/:personUID",
   authenticateToken,
   handleCheckPersonInUserWatchList
 );
 
 userRouter.post(
-  "/my-list/add-person",
+  "/add-person",
   authenticateToken,
   handleAddPersonToUserWatchList
 );
 
-userRouter.get("/my-list/list", authenticateToken, handleFetchUserWatchList);
+userRouter.get("/list/:page", authenticateToken, handleFetchUserWatchList);
 
 module.exports = userRouter;
