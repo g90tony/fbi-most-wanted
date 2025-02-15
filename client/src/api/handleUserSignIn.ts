@@ -40,6 +40,7 @@ export default async function handleUserSignIn(form: TSignInFormSchema) {
             email: data.email,
             name: data.name,
             sessionToken: data.sessionToken,
+            tokenExpiryTime: data.tokenExpiryTime,
           });
         })
         .catch((error: Error) => {
@@ -60,6 +61,7 @@ export default async function handleUserSignIn(form: TSignInFormSchema) {
       email: response.email,
       name: response.name,
       sessionToken: response.sessionToken,
+      tokenExpiryTime: response.tokenExpiryTime,
     };
 
     return authResponse;
