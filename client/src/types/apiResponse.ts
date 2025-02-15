@@ -5,6 +5,7 @@ export type TUserSignInResponse = {
   name: string;
   email: string;
   sessionToken: string;
+  tokenExpiryTime: number;
 };
 
 export type TWantedListFilteredResponse = {
