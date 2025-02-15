@@ -31,6 +31,8 @@ server.use("/auth", authRouter);
 
 server.use("/most-wanted", watchListRouter);
 
+server.use("/my-list", watchListRouter);
+
 server.listen(port, () => {
   console.log("Server Running on port", port);
 });
