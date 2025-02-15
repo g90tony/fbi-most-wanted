@@ -18,15 +18,10 @@ export async function handleFetchUserWatchList(
       },
     });
   } catch (error) {
-    if (process.env.ENV === "development")
-      console.error("userSessionData error", error);
-
-    res.status(500).json({
-      message: { ...(error as Error) }.message,
-    });
+    console.error("FETCH_USER_LIST_DATA_ERROR", error);
   }
 
-  console.log("userList", userListId);
+  console.log("userListData", userListId);
 
   if (userListId !== null && userListId !== undefined) {
     let listPersons: any | null = null;
@@ -38,11 +33,7 @@ export async function handleFetchUserWatchList(
         },
       });
     } catch (error) {
-      console.error("userSessionData error", error);
-
-      res.status(500).json({
-        message: { ...(error as Error) }.message,
-      });
+      console.log("FETCH_USER_LIST_DATA_ERROR", error);
     }
 
     if (listPersons.data === null) {
@@ -50,6 +41,8 @@ export async function handleFetchUserWatchList(
     } else if (listPersons.data.length === 0) {
       res.status(200).json([]);
     }
+
+    console.log("listPersons", listPersons);
 
     const listPersonsData: any[] | Promise<any[]> = [];
 
@@ -66,8 +59,29 @@ export async function handleFetchUserWatchList(
       }
     });
 
-    // res.status(200).json(listPersonsData);
-    res.status(200).json({ data: [] });
+    res.status(200).json(listPersonsData);
+  } else if (userListId === null) {
+    let newUserList: any | null;
+
+    try {
+      newUserList = await prismaClient.userList.create({
+        data: {
+          user_id: req.user.id,
+        },
+      });
+    } catch (error) {
+      console.log("FETCH_USER_LIST_DATA_ERROR", error);
+    }
+
+    console.log("newUserListId", newUserList);
+
+    if (newUserList !== null) {
+      res.status(200).json([]);
+    } else {
+      res
+        .status(500)
+        .json({ message: "There was a problem fetching your list." });
+    }
   }
 }
 
