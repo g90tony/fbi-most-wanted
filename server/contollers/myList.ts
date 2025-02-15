@@ -2,70 +2,72 @@ import { Request, Response } from "express";
 import prismaClient from "../lib/prisma/client";
 import { IUserAuthRequestObj } from "../lib/types/auth";
 import { utilFindWantedPerson } from "./watchList";
+import { PrismaClient } from "@prisma/client";
 
 export async function handleFetchUserWatchList(
   req: IUserAuthRequestObj,
   res: Response
 ) {
   let userListId: any | null = null;
+  console.info("Found User List", req.params);
 
-  userListId = await prismaClient.userList
-    .findFirst({
+  try {
+    userListId = await prismaClient.userList.findFirst({
       where: {
         user_id: req.user.id,
       },
-    })
-    .then((data) => {
-      data !== null ? data.id : null;
-    })
-    .catch((error) => {
-      if (process.env.ENV === "development")
-        console.error("userSessionData error", error);
+    });
+  } catch (error) {
+    if (process.env.ENV === "development")
+      console.error("userSessionData error", error);
+
+    res.status(500).json({
+      message: { ...(error as Error) }.message,
+    });
+  }
+
+  console.log("userList", userListId);
+
+  if (userListId !== null && userListId !== undefined) {
+    let listPersons: any | null = null;
+
+    try {
+      listPersons = await prismaClient.userListPerson.findMany({
+        where: {
+          list_id: userListId,
+        },
+      });
+    } catch (error) {
+      console.error("userSessionData error", error);
 
       res.status(500).json({
         message: { ...(error as Error) }.message,
       });
+    }
+
+    if (listPersons.data === null) {
+      res.status(404);
+    } else if (listPersons.data.length === 0) {
+      res.status(200).json([]);
+    }
+
+    const listPersonsData: any[] | Promise<any[]> = [];
+
+    listPersons.data.forEach(async (person: any) => {
+      const foundPerson: any | null = await utilFindWantedPerson(
+        person.uid,
+        parseInt(req.params.page!)
+      );
+
+      console.log("foundPerson", foundPerson);
+
+      if (foundPerson !== null) {
+        listPersonsData.push(foundPerson);
+      }
     });
 
-  if (userListId !== null && userListId !== undefined) {
-    const listPersons = await prismaClient.userListPerson
-      .findMany({
-        where: {
-          list_id: userListId,
-        },
-      })
-      .then((data) => {
-        if (data === null) {
-          res.status(404);
-        } else if (data.length === 0) {
-          res.status(200).json([]);
-        }
-
-        const listPersonsData: any[] | PromiseLike<any[]> = [];
-
-        data.forEach(async (person) => {
-          const foundPerson: any | null = await utilFindWantedPerson(
-            person.uid
-          );
-
-          if (foundPerson !== null) {
-            listPersonsData.push(foundPerson);
-          }
-        });
-
-        return listPersonsData;
-      })
-      .catch((error) => {
-        console.error("userSessionData error", error);
-
-        res.status(500).json({
-          message: { ...(error as Error) }.message,
-        });
-      });
-
-    if (listPersons !== undefined) {
-      res.status(200).json(listPersons);
-    }
+    // res.status(200).json(listPersonsData);
+    res.status(200).json({ data: [] });
   }
 }
 
@@ -122,7 +124,8 @@ export async function handleAddPersonToUserWatchList(
       })
       .then(async () => {
         const foundPerson: any | null = await utilFindWantedPerson(
-          req.body.personUid
+          req.body.personUid,
+          parseInt(req.params.page)
         );
 
         if (foundPerson !== null) {
