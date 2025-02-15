@@ -278,6 +278,7 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
           if (isDevEnv) {
             console.error("FETCH_DASHBOARD_FAILURE", error);
           }
+
           setIsLoading(false);
           setIsEmpty(true);
 
@@ -316,39 +317,40 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
     switch (type) {
       case "filtered":
         return wantedListState.filteredWantedList.length === 0 ? (
-          <GlobalEmptyPlaceholder
-            type="page"
-            message={`
-              <p style="font-weight:700">
-                There was a problem loading the queried data
-              </p> <br/>
-              <p style="color:#fff;font-size:0.7rem;margin-top:2px">
-                  Please reload the page.
-              </p> 
-           `}
-          />
+          <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+            <GlobalEmptyPlaceholder
+              type="page"
+              message={`
+                <p style="font-weight:700">
+                  There was a problem loading the queried data
+                </p> <br/>
+                <p style="color:#fff;font-size:0.7rem;margin-top:2px">
+                    Please reload the page.
+                </p> 
+             `}
+            />
+          </div>
         ) : (
-          <>
-            {wantedListState.filteredWantedList.map((person, index: number) => (
-              <WantedListItem
-                lastElementRef={
-                  index === wantedListState.filteredWantedList.length - 1
-                    ? lastListElementRef
-                    : undefined
-                }
-                handleViewWantedPerson={handleViewWantedPerson}
-                person={person}
-                key={index}
-              />
-            ))}
-          </>
+          wantedListState.filteredWantedList.map((person, index: number) => (
+            <WantedListItem
+              lastElementRef={
+                index === wantedListState.filteredWantedList.length - 1
+                  ? lastListElementRef
+                  : undefined
+              }
+              handleViewWantedPerson={handleViewWantedPerson}
+              person={person}
+              key={index}
+            />
+          ))
         );
 
       case "categorized":
         return wantedListState.categorizedWantedList.length === 0 ? (
-          <GlobalEmptyPlaceholder
-            type="page"
-            message={`
+          <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+            <GlobalEmptyPlaceholder
+              type="page"
+              message={`
               <p style="font-weight:700">
                 There was a problem loading the wanted persons categorized under ${
                   params.category ?? "--"
@@ -358,59 +360,59 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
                   Please reload the page.
               </p> 
            `}
-          />
+            />
+          </div>
         ) : (
-          <>
-            {wantedListState.wantedList.map((person, index: number) => (
-              <WantedListItem
-                lastElementRef={
-                  index === wantedListState.categorizedWantedList.length - 1
-                    ? lastListElementRef
-                    : undefined
-                }
-                handleViewWantedPerson={handleViewWantedPerson}
-                person={person}
-                key={index}
-              />
-            ))}
-          </>
+          wantedListState.wantedList.map((person, index: number) => (
+            <WantedListItem
+              lastElementRef={
+                index === wantedListState.categorizedWantedList.length - 1
+                  ? lastListElementRef
+                  : undefined
+              }
+              handleViewWantedPerson={handleViewWantedPerson}
+              person={person}
+              key={index}
+            />
+          ))
         );
 
       case "personal":
         return wantedListState.myWantedList.length === 0 ? (
-          <GlobalEmptyPlaceholder
-            type="page"
-            message={`
+          <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+            <GlobalEmptyPlaceholder
+              type="page"
+              message={`
               <p style="font-weight:700">
-                There was a problem loading the your watch list data.
+                There was a problem loading your watch list data.
               </p> <br/>
               <p style="color:#fff;font-size:0.7rem;margin-top:2px">
                   Please reload the page.
               </p> 
            `}
-          />
+            />
+          </div>
         ) : (
-          <>
-            {wantedListState.myWantedList.map((person, index: number) => (
-              <WantedListItem
-                lastElementRef={
-                  index === wantedListState.filteredWantedList.length - 1
-                    ? lastListElementRef
-                    : undefined
-                }
-                handleViewWantedPerson={handleViewWantedPerson}
-                person={person}
-                key={index}
-              />
-            ))}
-          </>
+          wantedListState.myWantedList.map((person, index: number) => (
+            <WantedListItem
+              lastElementRef={
+                index === wantedListState.filteredWantedList.length - 1
+                  ? lastListElementRef
+                  : undefined
+              }
+              handleViewWantedPerson={handleViewWantedPerson}
+              person={person}
+              key={index}
+            />
+          ))
         );
 
       case "normal":
         return wantedListState.wantedList.length === 0 ? (
-          <GlobalEmptyPlaceholder
-            type="page"
-            message={`
+          <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+            <GlobalEmptyPlaceholder
+              type="page"
+              message={`
               <p style="font-weight:700">
                 There was a problem loading the wanted persons data.
               </p> <br/>
@@ -418,7 +420,8 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
                   Please reload the page.
               </p> 
            `}
-          />
+            />
+          </div>
         ) : (
           wantedListState.wantedList.map((person, index: number) => (
             <WantedListItem
@@ -436,9 +439,10 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
 
       default:
         return (
-          <GlobalEmptyPlaceholder
-            type="page"
-            message={`
+          <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+            <GlobalEmptyPlaceholder
+              type="page"
+              message={`
               <p style="font-weight:700">
                 There was a problem loading the page.
               </p> <br/>
@@ -446,7 +450,8 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
                   Please reload the page or try again later.
               </p> 
            `}
-          />
+            />
+          </div>
         );
     }
   }, [
