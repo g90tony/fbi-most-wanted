@@ -328,13 +328,10 @@ export async function handleFetchPaginatedWantedListNextPage(
   }
 }
 
-export async function utilFindWantedPerson(personUid: string) {
+export async function utilFindWantedPerson(personUid: string, page: number) {
   const allTargets = await axios({
     method: "GET",
     url: `https://api.fbi.gov/wanted/v1/list`,
-    params: {
-      page: 1,
-    },
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
