@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 const cors = require("cors");
 const authRouter = require("./routes/auth");
 const watchListRouter = require("./routes/watchList");
+const myListRouter = require("./routes/myList");
 
 const server: Express = express();
 
@@ -31,7 +32,7 @@ server.use("/auth", authRouter);
 
 server.use("/most-wanted", watchListRouter);
 
-server.use("/my-list", watchListRouter);
+server.use("/my-list", myListRouter);
 
 server.listen(port, () => {
   console.log("Server Running on port", port);
