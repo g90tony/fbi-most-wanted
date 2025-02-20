@@ -61,7 +61,10 @@ export function SignUpForm({
   );
 
   return (
-    <div className={cn("flex flex-col gap-6 w-[40vw] ", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 w-full lg:w-[40vw] ", className)}
+      {...props}
+    >
       <Card className="border-black bg-blue-950/20">
         <CardHeader>
           <div className="flex flex-col items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -83,7 +86,7 @@ export function SignUpForm({
           <Form {...signUpForm}>
             <form>
               <div className="flex flex-col gap-6">
-                <div className="flex flex-row gap-4 w-full">
+                <div className="flex flex-col lg:flex-row gap-4 w-full">
                   <FormField
                     control={signUpForm.control}
                     name="name"
@@ -132,7 +135,7 @@ export function SignUpForm({
                     )}
                   />
                 </div>
-                <div className="flex flex-row gap-4 w-full">
+                <div className="flex flex-col lg:flex-row gap-4 w-full">
                   <FormField
                     control={signUpForm.control}
                     name="email"
@@ -157,7 +160,7 @@ export function SignUpForm({
                     )}
                   />
                 </div>
-                <div className="flex flex-row gap-4 w-full">
+                <div className="flex flex-col lg:flex-row gap-4 w-full">
                   <FormField
                     control={signUpForm.control}
                     name="password"
@@ -205,7 +208,7 @@ export function SignUpForm({
                     )}
                   />
                 </div>
-                <div className="flex flex-row flex-nowrap justify-between h-auto w-full mt-4">
+                <div className="flex flex-col-reverse lg:flex-row flex-nowrap items-center justify-center lg:justify-between h-auto w-full mt-4">
                   <Button
                     onClick={signUpForm.handleSubmit(onSubmit)}
                     type="submit"
@@ -218,7 +221,7 @@ export function SignUpForm({
                       "Create Account"
                     )}
                   </Button>
-                  <div className="mt-4 text-center text-sm">
+                  <div className="mt-4 mb-2 text-center text-sm">
                     Already have an account?{" "}
                     <a
                       href="/sign-in"

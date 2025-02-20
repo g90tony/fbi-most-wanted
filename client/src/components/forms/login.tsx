@@ -68,7 +68,10 @@ export function LoginForm({
   );
 
   return (
-    <div className={cn("flex flex-col gap-6 w-[40vw]", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 w-full lg:w-[40vw]", className)}
+      {...props}
+    >
       <Card className="border-black bg-blue-950/20">
         <CardHeader>
           <div className="flex flex-col items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -140,7 +143,7 @@ export function LoginForm({
                 )}
               />
 
-              <div className="flex flex-row flex-nowrap justify-between h-auto w-full mt-4">
+              <div className="flex flex-col-reverse lg:flex-row flex-nowrap items-center justify-center lg:justify-between h-auto w-full mt-4">
                 <Button
                   type="submit"
                   onClick={signInForm.handleSubmit(onSubmit)}
@@ -153,7 +156,7 @@ export function LoginForm({
                     "Sign In"
                   )}
                 </Button>
-                <div className="mt-4 text-center text-sm">
+                <div className="mt-4 mb-2 text-center text-sm">
                   Don't have an account?{" "}
                   <a
                     href="/sign-up"
