@@ -8,7 +8,11 @@ const myListRouter = require("./routes/myList");
 
 const server: Express = express();
 
-var allowlist = ["https://localhost:3000", "http://127.0.0.1", "*"];
+var allowlist = [
+  "http://127.0.0.1",
+  "https://fbi-watchlist-client.onrender.com",
+  "*",
+];
 
 var corsOptionsDelegate = function (req: any, callback: any) {
   var corsOptions;
