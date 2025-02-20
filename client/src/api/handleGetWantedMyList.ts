@@ -15,14 +15,14 @@ export default async function handleGetWantedMyList(
         Authorization: `Bearer ${token}`,
       },
     });
+
+    if (response !== null && response.status === 200) {
+      return {
+        status: "success",
+        data: response.data as TWantedListResponse,
+      };
+    }
   } catch (error) {
     throw new Error({ ...(error as Error) }.message);
-  }
-
-  if (response !== null && response.status === 200) {
-    return {
-      status: "success",
-      data: response.data as TWantedListResponse,
-    };
   }
 }
