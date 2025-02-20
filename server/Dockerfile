@@ -4,11 +4,9 @@ WORKDIR /src
 COPY package.json yarn.lock /src/
 EXPOSE 5000
 
-
 RUN npm install prisma -g
 
 RUN yarn install
 COPY . /src
 
-RUN npx prisma migrate deploy --schema ./prisma/schema.prisma
 CMD ["yarn", "start"]

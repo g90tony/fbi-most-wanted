@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server",
-    "start": "tsx server"
+    "start": "tsx server",
+    "poststart": "npx prisma migrate deploy --schema ./prisma/schema.prisma"
   },
   "author": "Caleb Tony",
   "license": "MIT",
