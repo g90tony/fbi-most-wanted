@@ -29,11 +29,11 @@ export async function handleFetchUserWatchList(
     try {
       listPersons = await prismaClient.userListPerson.findMany({
         where: {
-          list_id: userListId,
+          list_id: userListId.id,
         },
       });
     } catch (error) {
-      console.log("FETCH_USER_LIST_DATA_ERROR", error);
+      console.log("FETCH_USER_LIST_PERSON_DATA_ERROR", error);
     }
 
     if (listPersons.data === null) {
