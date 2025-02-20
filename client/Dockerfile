@@ -14,8 +14,6 @@ RUN yarn install
 # Copy the rest of your application files
 COPY . .
 
-ENV VITE_API_URL https://fbi-watchlist-server.onrender.com/
-
 # Expose the port your app runs on
 EXPOSE 3000
 
