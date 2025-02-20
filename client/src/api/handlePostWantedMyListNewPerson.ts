@@ -12,7 +12,7 @@ export default async function handlePostWantedMyListNewPerson(
       axios({
         method: "post",
         url: `${import.meta.env.VITE_API_URL}my-list/add-person`,
-        data: personUid,
+        data: { personUid: personUid },
         headers: {
           Authorization: `Bearer ${token}`,
         },
