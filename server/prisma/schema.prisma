@@ -21,8 +21,8 @@ model User {
   user_name   String
   password    String
   UserSession UserSession[]
-  userListId  Int           @unique @default(0)
-  UserList    UserList?
+  userListId  Int           @unique
+  UserList    UserList[]
 }
 
 model UserSession {
@@ -42,7 +42,7 @@ model UserList {
 }
 
 model UserListPerson {
-  uid        String   @id @unique
+  id         Int      @id @unique
   list_id    Int      @unique
   person_uid String
   UserList   UserList @relation(fields: [list_id], references: [id])
