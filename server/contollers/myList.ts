@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import prismaClient from "../lib/prisma/client";
 import { IUserAuthRequestObj } from "../lib/types/auth";
 import { utilFindWantedPerson } from "./watchList";
-import { PrismaClient } from "@prisma/client";
 
 export async function handleFetchUserWatchList(
   req: IUserAuthRequestObj,
@@ -36,30 +35,34 @@ export async function handleFetchUserWatchList(
       console.log("FETCH_USER_LIST_PERSON_DATA_ERROR", error);
     }
 
-    if (listPersons.data === null) {
+    console.log("listPersons.data", listPersons);
+
+    if (listPersons === null) {
       res.status(404);
-    } else if (listPersons.data.length === 0) {
+    } else if (listPersons.length === 0) {
       res.status(200).json([]);
-    }
+    } else {
+      console.log("listPersons", listPersons);
 
-    console.log("listPersons", listPersons);
+      const listPersonsData: any[] | Promise<any[]> = [];
 
-    const listPersonsData: any[] | Promise<any[]> = [];
+      for (let i = 0; i < listPersons.length; i++) {
+        const person = listPersons[i];
 
-    listPersons.data.forEach(async (person: any) => {
-      const foundPerson: any | null = await utilFindWantedPerson(
-        person.uid,
-        parseInt(req.params.page!)
-      );
+        const foundPerson: any | null = await utilFindWantedPerson(
+          person.person_uid,
+          parseInt(req.params.page!)
+        );
 
-      console.log("foundPerson", foundPerson);
+        console.log("foundPerson", foundPerson);
 
-      if (foundPerson !== null) {
-        listPersonsData.push(foundPerson);
+        if (foundPerson !== null) {
+          listPersonsData.push(foundPerson);
+        }
       }
-    });
 
-    res.status(200).json(listPersonsData);
+      res.status(200).json(listPersonsData);
+    }
   } else if (userListId === null) {
     let newUserList: any | null;
 
