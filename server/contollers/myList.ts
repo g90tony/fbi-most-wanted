@@ -132,7 +132,6 @@ export async function handleAddPersonToUserWatchList(
       .create({
         data: {
           person_uid: req.body.personUid,
-          uid: req.body.personUid,
           list_id: userListId,
         },
       })
