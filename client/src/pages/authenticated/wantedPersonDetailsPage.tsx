@@ -125,16 +125,15 @@ export default function WantedPersonDetailsPage() {
           <GlobalLoader message="Loading Most Wonted List" type="card" />
         ) : (
           <>
-            <div className="!bg-zinc-950 row-span-4 col-span-1 lg:col-span-5 rounded-xl justify-items-stretch text-center content-start min-h-[60vh] p-4 gap-2">
-              <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-4">
-                {" "}
+            <div className="bg-black lg:bg-zinc-950 col-span-1 lg:col-span-5 rounded-xl justify-items-stretch text-center content-start h-full min-h-[90vh] p-4 gap-2">
+              <div className="flex flex-col lg:flex-row justify-start items-center gap-4 w-full h-auto mb-1 lg:mb-4">
                 <img
                   src={personDetails.image}
                   alt={personDetails.title}
-                  className="w-[400px] h-[400px] object-cover rounded-xl"
+                  className="w-full lg:w-[400px] h-[400px] object-cover rounded-xl"
                 />
                 <div className="flex flex-col item-start justify-start w-full h-full">
-                  <div className="flex flex-row justify-end items-center w-full">
+                  <div className="flex flex-row justify-start lg:justify-end items-center w-full">
                     <Button
                       onClick={() =>
                         handleAddToPersonalList(
@@ -149,62 +148,65 @@ export default function WantedPersonDetailsPage() {
                   </div>
 
                   <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4">
-                    <h1 className="text-5xl capitalize text-white text-start font-bold w-full h-auto">
+                    <h1 className="text-3xl lg:text-5xl capitalize text-white text-start font-black w-full h-auto mb-2">
                       {personDetails.title.toLowerCase()}
                     </h1>
                   </div>
                   <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4">
-                    <p className="text-sm text-white font-bold w-auto h-auto">
+                    <p className="text-sm text-blue-400  font-bold w-auto h-auto">
                       Known Occupations
                     </p>
                     <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-0">
-                      {personDetails.occupations.length > 0 &&
-                        personDetails.occupations.map((item, index) => (
-                          <div
-                            key={index}
-                            className="bg-blue-300 py-2 px-4 rounded-xl mx-2"
-                          >
-                            <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
+                      {personDetails.occupations.length > 0
+                        ? personDetails.occupations.map((item, index) => (
+                            <div
+                              key={index}
+                              className="bg-blue-300 py-2 px-4 rounded-xl mx-2"
+                            >
+                              <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
+                                {item}
+                              </p>
+                            </div>
+                          ))
+                        : "--"}
                     </div>
                   </div>
                   <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4">
-                    <p className="text-sm text-white font-bold w-auto h-auto">
+                    <p className="text-sm text-blue-400 font-bold w-auto h-auto">
                       Known Aliases
                     </p>
                     <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-0">
-                      {personDetails.aliases.length > 0 &&
-                        personDetails.aliases.map((item, index) => (
-                          <div
-                            key={index}
-                            className="bg-blue-300 py-2 px-4 rounded-xl"
-                          >
-                            <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
+                      {personDetails.aliases.length > 0
+                        ? personDetails.aliases.map((item, index) => (
+                            <div
+                              key={index}
+                              className="bg-blue-300 py-2 px-4 rounded-xl"
+                            >
+                              <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
+                                {item}
+                              </p>
+                            </div>
+                          ))
+                        : "--"}
                     </div>
                   </div>
                   <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4">
-                    <p className="text-sm text-white font-bold w-auto h-auto">
+                    <p className="text-sm text-blue-400  font-bold w-auto h-auto">
                       Known Languages
                     </p>
                     <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-0">
-                      {personDetails.languages.length > 0 &&
-                        personDetails.languages.map((item, index) => (
-                          <div
-                            key={index}
-                            className="bg-blue-300 py-2 px-4 rounded-xl"
-                          >
-                            <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
-                              {item}
-                            </p>
-                          </div>
-                        ))}
+                      {personDetails.languages.length > 0
+                        ? personDetails.languages.map((item, index) => (
+                            <div
+                              key={index}
+                              className="bg-blue-300 py-2 px-4 rounded-xl"
+                            >
+                              <p className="text-xs text-blue-600 text-center font-bold w-full h-auto">
+                                {item}
+                              </p>
+                            </div>
+                          ))
+                        : "--"}
                     </div>
                   </div>
                 </div>
@@ -212,8 +214,8 @@ export default function WantedPersonDetailsPage() {
 
               <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-0">
                 <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-4">
-                  <div className="flex flex-col justify-start items-start gap-1 w-full h-auto px-4">
-                    <p className="text-lg text-blue-400 font-bold w-auto h-auto">
+                  <div className="flex flex-col justify-start items-start gap-1 w-full h-auto px-0 lg:px-4">
+                    <p className="text-lg text-blue-400 font-bold w-auto h-auto truncate">
                       Date of Birth
                     </p>
 
@@ -234,10 +236,10 @@ export default function WantedPersonDetailsPage() {
                   </div>
                   <div className="flex flex-col justify-start items-start gap-1 w-full h-auto px-4">
                     <p className="text-lg text-blue-400 font-bold w-auto h-auto">
-                      FBI Classification
+                      Classification
                     </p>
 
-                    <p className="py-2 px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2">
+                    <p className="py-2 px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2 truncate">
                       {personDetails.subjects[0]}
                     </p>
                   </div>
@@ -245,14 +247,14 @@ export default function WantedPersonDetailsPage() {
               </div>
 
               <div className="flex flex-row justify-start items-center gap-4 w-full h-auto mb-0">
-                <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4 px-4 overflow-y-auto">
+                <div className="flex flex-col justify-start items-start gap-4 w-full h-auto mb-4 px-0 lg:px-4 overflow-y-auto">
                   <p className="text-lg text-blue-400 font-bold w-auto h-auto">
                     Description
                   </p>
 
                   {personDetails.caution !== "--" && (
                     <div
-                      className="py-2 px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2"
+                      className="py-2 px-0 lg:px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2"
                       dangerouslySetInnerHTML={{
                         __html: personDetails.caution,
                       }}
@@ -261,7 +263,7 @@ export default function WantedPersonDetailsPage() {
 
                   {personDetails.details !== "--" && (
                     <div
-                      className="py-2 px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2"
+                      className="py-2 px-0 lg:px-4 rounded-xl text-sm text-white text-start font-medium w-full h-auto [&:p]:mb-2"
                       dangerouslySetInnerHTML={{
                         __html: personDetails.details,
                       }}
