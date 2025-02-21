@@ -262,17 +262,23 @@ export default function WantedList({ type = "normal" }: WantedListProps) {
 
           if (response !== undefined && response.status === "success") {
             if (wantedListState.currentPage === 1) {
-              dispatch(LOAD_LIST_DATA({ listType: type, list: response.data }));
+              dispatch(
+                LOAD_LIST_DATA({ listType: type, list: response.data! })
+              );
             } else {
               dispatch(
                 LOAD_NEXT_PAGE_LIST_DATA({
                   listType: type,
-                  list: response.data,
+                  list: response.data!,
                 })
               );
             }
             setIsLoading(false);
             setIsEmpty(false);
+          } else if (response !== undefined && response.status === "error") {
+            console.log(response);
+            setIsLoading(false);
+            setIsEmpty(true);
           }
         } catch (error) {
           if (isDevEnv) {
