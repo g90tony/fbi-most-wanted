@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "../ui/card";
 
 import handleDashboardGetCategories from "@/api/handleDashboardGetCategories";
+import GlobalEmptyPlaceholder from "./globalEmptyPlaceholder";
 
 export default function WantedCategoryList() {
   const authState: TAuthState = useSelector(AuthState);
   const router = useNavigate();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isEmpty, setIsEmpty] = useState<boolean>(true);
 
   const [categoryList, setCategoryList] = useState<string[]>([]);
 
@@ -49,8 +51,15 @@ export default function WantedCategoryList() {
           );
 
           if (response !== undefined && response.status === "success") {
-            setCategoryList(response.data);
+            setCategoryList(response.data!);
             setIsLoading(false);
+            setIsEmpty(false);
+
+            if (response.data!.length === 0) {
+              setIsEmpty(true);
+            }
+          } else if (response !== undefined && response.status === "error") {
+            setIsEmpty(true);
           }
         } catch (error) {
           if (isDevEnv) {
@@ -78,13 +87,27 @@ export default function WantedCategoryList() {
   return (
     <div
       className={cn(
-        isLoading
+        isLoading || isEmpty
           ? "flex flex-row justify-center items-start w-full h-full min-h-[100px] bg-zinc-950 rounded-lg"
           : "grid auto-rows-min grid-cols-1 lg:grid-cols-3 grid-rows-4 gap-4 w-full min-h-[100px] rounded-lg"
       )}
     >
       {isLoading ? (
         <GlobalLoader message="Loading Most Wonted List" type="card" />
+      ) : isEmpty ? (
+        <div className="grid col-span-full lg:col-span-full rounded-xl justify-items-stretch text-center content-center w-full h-full border-0 mb-4 bg-black cursor-pointer">
+          <GlobalEmptyPlaceholder
+            type="page"
+            message={`
+                      <p style="font-weight:700">
+                        There was a problem loading the categories data
+                      </p> <br/>
+                      <p style="color:#fff;font-size:0.7rem;margin-top:2px">
+                          Please reload the page.
+                      </p> 
+                   `}
+          />
+        </div>
       ) : (
         categoryList.length > 0 &&
         categoryList.map(
