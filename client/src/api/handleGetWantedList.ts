@@ -13,8 +13,15 @@ export default async function handleGetWantedList(token: string, page: number) {
       },
     });
   } catch (error) {
-    throw new Error({ ...(error as Error) }.message);
+    console.error({ ...(error as Error) }.message);
+
+    return {
+      status: "error",
+      message: { ...(error as Error) }.message,
+    };
   }
+
+  console.log("response", response);
 
   if (response !== null && response.status === 200) {
     return {
