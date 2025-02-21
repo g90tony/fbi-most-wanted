@@ -1,36 +1,28 @@
 import { Request, Response } from "express";
-import axios, { AxiosError, AxiosResponse } from "axios";
-import fallbackData from "../fallbackData";
+import axios, { AxiosError } from "axios";
 
 export async function handleFetchPaginatedWantedList(
   req: Request,
   res: Response
 ) {
-  const allTargets = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/wanted/v1/list/`,
-    params: {
-      page: req.params.page,
-    },
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
-    });
-
   let resData: any[] = [];
 
-  if (allTargets === null || allTargets === undefined) {
-    resData = [...fallbackData].map((person: any) => ({
+  try {
+    const allTargets = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/wanted/v1/list/`,
+      params: {
+        page: req.params.page,
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    });
+
+    resData = allTargets.data.items.map((person: any) => ({
       uid: person.uid,
       title: person.title,
       publication: person.publication,
@@ -39,79 +31,30 @@ export async function handleFetchPaginatedWantedList(
     }));
 
     res.status(200).json(resData);
-  } else {
-    resData = [...allTargets!.data.items].map((person: any) => ({
-      uid: person.uid,
-      title: person.title,
-      publication: person.publication,
-      nationality: person.nationality,
-      image: person.images[0].large,
-    }));
-
-    res.status(200).json(resData);
-  }
-
-  if (resData.length === 0) {
-    res.status(400);
+  } catch (error) {
+    console.error(
+      "LIST_WANTED_LIST_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
   }
 }
 
 export async function handleFetchWantedPerson(req: Request, res: Response) {
   const personUID = req.params.personUID;
-
-  const target = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/@wanted-person/${personUID}`,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
-    });
-
   let resData: any | null = null;
 
-  if (target === null || target === undefined) {
-    console.log("target", target);
-
-    [...fallbackData].forEach((person: any) => {
-      if (person.uid === personUID) {
-        resData = {
-          uid: person.uid,
-          occupations: person.occupations !== null ? person.occupations : [],
-          sex: person.sex !== null ? person.sex : "--",
-          dates_of_birth_used:
-            person.dates_of_birth_used !== null
-              ? person.dates_of_birth_used
-              : [],
-          caution: person.caution !== null ? person.caution : "--",
-          nationality: person.nationality !== null ? person.nationality : "--",
-          subjects: person.subjects !== null ? person.subjects : [],
-          aliases: person.aliases !== null ? person.aliases : [],
-          title: person.title !== null ? person.title : "--",
-          languages: person.languages !== null ? person.languages : [],
-          details: person.details !== null ? person.details : "--",
-          image: person.images[0].large,
-        };
-      }
+  try {
+    const target = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/@wanted-person/${personUID}`,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     });
 
-    console.log(personUID, resData);
-
-    if (resData !== null) {
-      res.status(200).json(resData);
-    } else {
-      res.status(404);
-    }
-  } else {
     resData = {
       uid: target.data.uid,
       occupations:
@@ -131,12 +74,24 @@ export async function handleFetchWantedPerson(req: Request, res: Response) {
       details: target.data.details !== null ? target.data.details : "--",
       image: target.data.images[0].large,
     };
+  } catch (error) {
+    console.error(
+      "LIST_WANTED_LIST_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
 
-    if (resData !== null) {
-      res.status(200).json(resData);
-    } else {
-      res.status(404);
-    }
+    res.status(500).json({
+      message:
+        "There was a problem fetching the wanted person. Please try again later.",
+    });
+  }
+
+  if (resData !== null) {
+    res.status(200).json(resData);
+  } else {
+    res
+      .status(404)
+      .json({ message: "The person with that uid does not exist." });
   }
 }
 
@@ -145,6 +100,7 @@ export async function handleFetchCategoryWantedList(
   res: Response
 ) {
   let reqCategory = "";
+  let resData: any[] = [];
 
   String(req.params.category)
     .toLowerCase()
@@ -157,128 +113,131 @@ export async function handleFetchCategoryWantedList(
       }
     });
 
-  const allTargets = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/wanted/v1/list`,
-    params: {
-      page: req.params.page,
-    },
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
+  try {
+    const allTargets = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/wanted/v1/list`,
+      params: {
+        page: req.params.page,
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     });
 
-  let resData: any[] = [];
+    for (let i = 0; i < allTargets.data.items.length; i++) {
+      const person = allTargets.data.items[i];
 
-  if (allTargets === null || allTargets === undefined) {
-    fallbackData.forEach((person: any) => {
-      if (String(person.subjects[0]).toLowerCase().includes(reqCategory)) {
-        resData.push({
-          uid: person.uid,
-          title: person.title,
-          publication: person.publication,
-          nationality: person.nationality,
-          image: person.images[0].large,
-        });
-      }
+      resData.push({
+        uid: person.uid,
+        title: person.title,
+        publication: person.publication,
+        nationality: person.nationality,
+        image: person.images[0].large,
+      });
+    }
+  } catch (error) {
+    console.error(
+      "CATEGORY_WANTED_LIST_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
+
+    res.status(500).json({
+      message: "There was a problem fetching the category watch list.",
     });
-
-    res.status(200).json(resData);
-  } else {
-    allTargets!.data.items.forEach((person: any) => {
-      if (String(person.subjects[0]).toLowerCase().includes(reqCategory)) {
-        resData.push({
-          uid: person.uid,
-          title: person.title,
-          publication: person.publication,
-          nationality: person.nationality,
-          image: person.images[0].large,
-        });
-      }
-    });
-
-    res.status(200).json(resData);
   }
 
-  if (resData.length === 0) {
-    res.status(400);
-  }
+  res.status(200).json(resData);
 }
 
 export async function handleFetchWantedCategories(req: Request, res: Response) {
-  const allTargets = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/wanted/v1/list`,
-    params: {
-      page: req.body.page,
-    },
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
-    });
-
+  let itemCount: number = 0;
+  let personsLoaded: number = 0;
+  let maxPages = 0;
   let resData: any[] = [];
 
-  const categories: string[] = [];
-
-  if (allTargets === null || allTargets === undefined) {
-    [...fallbackData].forEach((person: any) => {
-      let alreadyExists: boolean = false;
-
-      categories.forEach((category) => {
-        if (category === person.subjects[0]) {
-          alreadyExists = true;
-        }
-      });
-
-      if (alreadyExists === false) {
-        categories.push(person.subjects[0]);
-      }
+  try {
+    const response = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/wanted/v1/list`,
+      params: {
+        page: 1,
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
     });
 
-    res.status(200).json(categories);
-  } else {
-    const categories: string[] = [];
+    console.log(
+      "maxPages",
+      Math.floor(response.data.total / response.data.items.length)
+    );
 
-    [...allTargets!.data.items].forEach((person: any) => {
-      let alreadyExists: boolean = false;
-
-      categories.forEach((category) => {
-        if (category === person.subjects[0]) {
-          alreadyExists = true;
-        }
-      });
-
-      if (!alreadyExists) {
-        categories.push(person.subjects[0]);
-      }
-    });
-
-    res.status(200).json(categories);
+    maxPages = Math.floor(response.data.total / response.data.items.length) + 1;
+  } catch (error) {
+    console.error(
+      "CATEGORIES_TOTAL_ITEM_COUNT_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
   }
 
-  if (resData.length === 0) {
-    res.status(400);
+  if (maxPages > 0) {
+    for (let page = 1; page < maxPages; page++) {
+      try {
+        setTimeout(async () => {
+          const allTargets = await axios({
+            method: "GET",
+            url: `https://api.fbi.gov/wanted/v1/list`,
+            params: {
+              page,
+            },
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              "User-Agent":
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            },
+          });
+
+          const categories: string[] = [...resData];
+
+          for (let i = 0; i < allTargets.data.items.length; i++) {
+            const person = allTargets.data.items[i];
+            let alreadyExists: boolean = false;
+
+            for (let catIndex = 0; catIndex < categories.length; catIndex++) {
+              const category = categories[catIndex];
+
+              if (category === person.subjects[0]) {
+                alreadyExists = true;
+              }
+            }
+
+            if (!alreadyExists) {
+              categories.push(person.subjects[0]);
+              console.log("new cat", person.subjects[0]);
+            }
+          }
+        }, 350);
+      } catch (error) {
+        console.error(
+          "LIST_WANTED_CATEGORIES_FAILURE",
+          { ...(error as AxiosError) }.message
+        );
+      }
+    }
+
+    res.status(200).json(resData);
+  } else {
+    res
+      .status(500)
+      .json({ message: "There was a problem fetching the wanted categories" });
   }
 }
 
@@ -286,32 +245,23 @@ export async function handleFetchPaginatedWantedListNextPage(
   req: Request,
   res: Response
 ) {
-  const allTargets = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/wanted/v1/list`,
-    params: {
-      page: req.body.page,
-    },
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
-    });
-
   let resData: any[] = [];
 
-  if (allTargets === null || allTargets === undefined) {
-    res.status(404);
-  } else {
+  try {
+    const allTargets = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/wanted/v1/list`,
+      params: {
+        page: req.body.page,
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    });
+
     resData = [...allTargets!.data].map((person: any) => ({
       uid: person.uid,
       title: person.title,
@@ -321,36 +271,34 @@ export async function handleFetchPaginatedWantedListNextPage(
     }));
 
     res.status(200).json(resData);
-  }
-
-  if (resData.length === 0) {
-    res.status(400);
+  } catch (error) {
+    console.error(
+      "LIST_WANTED_LIST_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
   }
 }
 
 export async function utilFindWantedPerson(personUid: string, page: number) {
-  const allTargets = await axios({
-    method: "GET",
-    url: `https://api.fbi.gov/wanted/v1/list`,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  })
-    .then((data) => data)
-    .catch((error) => {
-      console.error(
-        "LIST_WANTED_LIST_FAILURE",
-        { ...(error as AxiosError) }.message
-      );
-    });
-
   let resData: any | null = null;
 
-  if (allTargets === null || allTargets === undefined) {
-    [...fallbackData].forEach((person: any) => {
+  try {
+    const allTargets = await axios({
+      method: "GET",
+      url: `https://api.fbi.gov/wanted/v1/list`,
+      params: {
+        page,
+      },
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    });
+
+    for (let i = 0; i < allTargets.data.items.length; i++) {
+      const person = allTargets.data.items[i];
       if (person.uid === personUid) {
         resData = {
           uid: person.uid,
@@ -370,32 +318,15 @@ export async function utilFindWantedPerson(personUid: string, page: number) {
           image: person.images[0].large,
         };
       }
-    });
+    }
 
     return resData;
-  } else {
-    [...allTargets!.data.items].forEach((person: any) => {
-      if (person.uid === personUid) {
-        resData = {
-          uid: person.uid,
-          occupations: person.occupations !== null ? person.occupations : [],
-          sex: person.sex !== null ? person.sex : "--",
-          dates_of_birth_used:
-            person.dates_of_birth_used !== null
-              ? person.dates_of_birth_used
-              : [],
-          caution: person.caution !== null ? person.caution : "--",
-          nationality: person.nationality !== null ? person.nationality : "--",
-          subjects: person.subjects !== null ? person.subjects : [],
-          aliases: person.aliases !== null ? person.aliases : [],
-          title: person.title !== null ? person.title : "--",
-          languages: person.languages !== null ? person.languages : [],
-          details: person.details !== null ? person.details : "--",
-          image: person.images[0].large,
-        };
-      }
-    });
-
-    return resData;
+  } catch (error) {
+    console.error(
+      "LIST_WANTED_LIST_FAILURE",
+      { ...(error as AxiosError) }.message
+    );
   }
+
+  return null;
 }
